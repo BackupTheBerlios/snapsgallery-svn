@@ -25,7 +25,7 @@ $ConfigSQL = "CREATE TABLE `{$_POST['tblPrefix']}config` (
   PRIMARY KEY  (`var`)
 ) TYPE=MyISAM";
 
-$ConfigVarsSQL = array(	0 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('version', '1.4')",
+$ConfigVarsSQL = array(	0 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('version', '1.4.2')",
 											1 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('absPath', '{$_SESSION['configVars']['absPath']}')",
 											2 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('albumsPath', '{$_SESSION['configVars']['albumsPath']}')",
 											3 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('cachePath', '{$_SESSION['configVars']['cachePath']}')",
