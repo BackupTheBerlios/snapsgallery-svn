@@ -13,28 +13,12 @@ while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 }
 
 /**
-* Function: pageHeader() - creates the page header
-*
-* @access public
-* @var string $title - the title of the gallery
-*/
-function pageHeader($title) {
-	global $config;
-	$out = '<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;"><tr><td style="text-align: left;"><h1><a href="'.$_SERVER['PHP_SELF'].'">'.$title.'</a></h1></td><td style="text-align: right; padding: 5px;"><a href="'.$_SERVER['PHP_SELF'].'?action=login">Log In</a>';
-	if ($config['allowSubmit'] == 1) {
-		$out .= ' | <a href="'.$_SERVER['PHP_SELF'].'?action=submit">Submit Picture</a></td></tr></table><br />';
-	} else {
-		$out .= '</td></tr></table><br />';
-	}
-	return $out;
-}
-/**
 * Function: crumb() - creates the breadcrumb navigation
 *
-* @access public
-* @var string $index - the index page
-* @var string/array $album - if album is the current page, it is a string with the album's name - if an image is the current page, it is an array with the albumID and it's name
-* @var string $imgName - the image being viewed
+* @access	public
+* @var		string			$index - the index page
+* @var		string/array	$album - if album is the current page, it is a string with the album's name - if an image is the current page, it is an array with the albumID and it's name
+* @var		string			$imgName - the image being viewed
 */
 function crumb($index, $album, $imgName) {
 	global $title;
@@ -56,43 +40,76 @@ function crumb($index, $album, $imgName) {
 /**
 * Function: makePagination() - creates page links
 *
-* @access public
-* @var integer $albumID - the album to paginate
+* @access	public
+* @var		string		$type - album or index
+* @var		integer		$ID - the id to paginate
 */
-function makePagination($albumID) {
+function makePagination($type = 'album', $ID) {
 	global $db, $config, $start;
-	/* Get the total number of images in this album */
-	$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID ='.$albumID);
-	if (DB::isError($result)) {
-		die($result->getMessage());
-	}
-	$numImages = $result->numRows();
-	$out = 'Page: ';
-	/* Figure out number of pages we should have */
-	$totalPages = ceil($numImages/$config['imagesPP']);
-	/* Figure out what page we are on */
-	$current = $start/$config['imagesPP']+1;
-	for ($i = 1; $i <= $totalPages; $i++) {
-		/* If this is the current page, echo a non-link */
-		if ($i == $current) {
-			$out .=  '<span style="font-weight: bold;">[ '.$i.' ]</span>&nbsp;';
-		/* otherwise, echo a link to the next page */
-		} else {
-			/* If $i is not 1 (i.e. the first page), the link is echoed with a start variable */
-			if ($i != 1) {
-				$out .= '<a href="'.$_SERVER['PHP_SELF'].'?album='.$albumID.'&amp;start='.$config['imagesPP']*($i-1).'">'.$i.'</a>&nbsp;';
-			/* otherwise, the link is echoed as the first page (i.e. no start) */
-			} else {
-				$out .= '<a href="'.$_SERVER['PHP_SELF'].'?album='.$albumID.'">'.$i.'</a>&nbsp;';
+	switch ($type) {
+		case 'album' :
+			/* Get the total number of images in this album */
+			$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID ='.$ID);
+			if (DB::isError($result)) {
+				die($result->getMessage());
 			}
-		}
+			$numImages = $result->numRows();
+			$out = 'Page: ';
+			/* Figure out number of pages we should have */
+			$totalPages = ceil($numImages/$config['imagesPP']);
+			/* Figure out what page we are on */
+			$current = $start/$config['imagesPP']+1;
+			for ($i = 1; $i <= $totalPages; $i++) {
+				/* If this is the current page, echo a non-link */
+				if ($i == $current) {
+					$out .=  '<span style="font-weight: bold;">[ '.$i.' ]</span>&nbsp;';
+				/* otherwise, echo a link to the next page */
+				} else {
+					/* If $i is not 1 (i.e. the first page), the link is echoed with a start variable */
+					if ($i != 1) {
+						$out .= '<a href="'.$_SERVER['PHP_SELF'].'?album='.$ID.'&amp;start='.$config['imagesPP']*($i-1).'">'.$i.'</a>&nbsp;';
+					/* otherwise, the link is echoed as the first page (i.e. no start) */
+					} else {
+						$out .= '<a href="'.$_SERVER['PHP_SELF'].'?album='.$ID.'">'.$i.'</a>&nbsp;';
+					}
+				}
+			}
+			break;
+		case 'index' :
+			/* Get the total number of albums in the gallery */
+			$result =& $db->query('SELECT * FROM '.TP.'albums');
+			if (DB::isError($result)) {
+				die($result->getMessage());
+			}
+			$numAlbums = $result->numRows();
+			$out = 'Page: ';
+			/* Figure out number of pages we should have */
+			$totalPages = ceil($numAlbums/$config['albumsPP']);
+			/* Figure out what page we are on */
+			$current = $start/$config['albumsPP']+1;
+			for ($i = 1; $i <= $totalPages; $i++) {
+				/* If this is the current page, echo a non-link */
+				if ($i == $current) {
+					$out .=  '<span style="font-weight: bold;">[ '.$i.' ]</span>&nbsp;';
+				/* otherwise, echo a link to the next page */
+				} else {
+					/* If $i is not 1 (i.e. the first page), the link is echoed with a start variable */
+					if ($i != 1) {
+						$out .= '<a href="'.$_SERVER['PHP_SELF'].'?start='.$config['albumsPP']*($i-1).'">'.$i.'</a>&nbsp;';
+					/* otherwise, the link is echoed as the first page (i.e. no start) */
+					} else {
+						$out .= '<a href="'.$_SERVER['PHP_SELF'].'">'.$i.'</a>&nbsp;';
+					}
+				}
+			}
+			break;
 	}
 	return $out;
 }
 /**
 * Function: albumList() - lists albums (index page)
 *
-* @access public
+* @access	public
 */
 function albumList() {
 	global $db;
@@ -113,6 +130,7 @@ function albumList() {
 			$album[$i][4] = $line['albumModified'];
 			$i++;
 		}
+		$album[1][5] = makePagination('index', '1');
 	/* otherwise, we have no albums */
 	} else {
 		$album = 'There are no albums yet!';
@@ -120,10 +138,10 @@ function albumList() {
 	return $album;
 }
 /**
-* Function: album() - views, creates, and deletes albums
+* Function: album() - lists images in an album
 *
-* @access public
-* @var integer $albumID - ID of album to display
+* @access	public
+* @var		integer		$albumID - ID of album to display
 */
 function album($albumID) {
 	global $db, $title, $config, $start;
@@ -173,7 +191,7 @@ function album($albumID) {
 		}
 		$image[1][9] = crumb('index', $albumTitle, '');
 		if ($numImages > $config['imagesPP']) {
-			$image[1][8] = makePagination($albumID);
+			$image[1][8] = makePagination('album', $albumID);
 		} else {
 			$image[1][8] = 'Page 1 of 1';
 		}
@@ -184,11 +202,11 @@ function album($albumID) {
 	return $image;
 }
 /**
-* Function: image() - views, resizes, and deletes images
+* Function: image() - retrieves information for a specific image
 *
-* @access public
-* @var integer $albumID - ID of album picture belongs to
-* @var integer $imgID - ID of image to work with
+* @access	public
+* @var		integer		$albumID - ID of album picture belongs to
+* @var		integer		$imgID - ID of image to work with
 */
 function image($albumID, $imgID) {
 	global $db, $title, $config;
@@ -232,10 +250,10 @@ function image($albumID, $imgID) {
 /**
 * Function: comment() - view, create, and delete/moderate comments - called from image()
 *
-* @access private
-* @var string $action - view or create - defaults to view
-* @var integer $imgID - ID of image to view or add comments for
-* @var integer $albID - ID of album image belongs to
+* @access	private
+* @var		string		$action - view or create - defaults to view
+* @var		integer		$imgID - ID of image to view or add comments for
+* @var		integer		$albID - ID of album image belongs to
 */
 function comment($action = 'view', $imgID, $albID) {
 	global $db, $title, $config;
@@ -286,14 +304,14 @@ function comment($action = 'view', $imgID, $albID) {
 	return $comment;
 }
 /**
-* Function: getImage() - returns image source if file exists, caches then returns image source if file does not exist
+* Function: getImage() - returns image as HTML <img> tag
 *
-* @access private
-* @var integer $albumID - ID of album picture belongs to
-* @var string $imgFilename - image filename to work with
-* @var string $imgName - name of image
-* @var integer $size - thumbnail size
-* @var string $mode - image generation mode (cache or dynamic)
+* @access	private
+* @var		integer		$albumID - ID of album picture belongs to
+* @var		string		$imgFilename - image filename to work with
+* @var		string		$imgName - name of image
+* @var		integer		$size - thumbnail size
+* @var		string		$mode - image generation mode (cache or dynamic)
 */
 function getImage($albumID, $imgFilename, $imgName, $size, $mode) {
 	global $db, $config;
@@ -316,90 +334,10 @@ function getImage($albumID, $imgFilename, $imgName, $size, $mode) {
 	}
 }
 /**
-* Function: makeTable() - assemble and return a table filled with data
-*
-* @access private
-* @var array $data - information to be outputted - multi-dimensional array containing links, names, and extra data
-* @var string $type - type of table - index, album, image, or comment
-* @var integer $size - maximum width/height of thumbnail images - defaults to small thumbnails limit
-*/
-function makeTable($data, $type = 'index', $size = 100) {
-	global $config;
-	switch($type) {
-		case 'index' :
-			$out = "\n".'<table cellpadding="0" cellspacing="10" border="0" style="width: 100%;">'."\n\t".'<tr>'."\n";
-			for ($i = 1; $i < count($data)+1; $i++) {
-				$out .= "\t\t".'<td class="snapsTable">'.$data[$i][0].'<img src="images/album.png" alt="'.$data[$i][1].'" title="'.$data[$i][1].'" /></a><br />'.$data[$i][0].$data[$i][1].'</a><br />'.$data[$i][2].'<br /><div class="snapsNotes">('.$data[$i][3].' items in this album)<br />Last modified: '.date("m-d-Y", $data[$i][4]).'</div></td>'."\n";
-				if ($i % 3 == 0) {
-					if (!($i ==  count($data))) {
-						$out .= "\t".'</tr>'."\n\t".'<tr>'."\n";
-					}
-				}
-			}
-			$out .= "\t".'</tr>'."\n".'</table>'."\n";
-			break;
-		case 'album' :
-			$out = "\n".'<table cellpadding="0" cellspacing="10" border="0" style="width: 100%;">'."\n\t".'<tr>'."\n";
-			for ($i = 1; $i < count($data)+1; $i++) {
-				$comment = (!empty($data[$i][7])) ? $data[$i][7].'<br />' : '';
-				$out .= "\t\t".'<td class="snapsTable">'.$data[$i][0].$data[$i][2].'</a><br />'.$data[$i][0].$data[$i][1].'</a><br /><br /><div class="snapsNotes"><span style="font-style: oblique;">Viewed '.$data[$i][6].' times<br />'.$comment.'</span>Created: '.date("m-d-Y", $data[$i][4]).'<br />Last modified: '.date("m-d-Y", $data[$i][5]).'</div></td>'."\n";
-				if ($i % 3 == 0) {
-					if (!($i ==  count($data))) {
-						$out .= "\t".'</tr>'."\n\t".'<tr>'."\n";
-					}
-				}
-			}
-			$out .= "\t".'</tr>'."\n".'</table>'."\n";
-			break;
-		case 'image' :
-			$out = "\n".'<table cellpadding="0" cellspacing="10" border="0" style="width: 100%;">'."\n\t".'<tr>'."\n";
-			$out .= "\t\t".'<td class="snapsTable"><a href="'.$config['albumsPath'].$data[1][5].'/'.$data[1][1].'">'.$data[1][6].'</a></td>'."\n";
-			$out .= "\t".'<tr>'."\n\t\t".'<td class="snapsTable">'.$data[1][2].'<br /><div class="snapsNotes">Created: '.date("m-d-Y", $data[1][3]).'<br />Last Modified: '.date("m-d-Y", $data[1][4]).'</div></td>'."\n";
-			$out .= "\t".'</tr>'."\n".'</table>'."\n";
-			break;
-		case 'comment' :
-			$out = "\n".'<table cellpadding="0" cellspacing="10" border="0" style="width: 100%;">'."\n\t";
-			for ($i = 1; $i < count($data)+1; $i++) {
-				$out .= '<tr>'."\n\t\t".'<td class="snapsTable" style="text-align: left;"><span class="snapsNotes">By: <a href="mailto:'.emailOB($data[$i][1]).'">'.$data[$i][0].'</a><br />Posted: '.date("m-d-Y @ g:i:s a", $data[$i][3]).'</span><br /><br />'.$data[$i][2].'</td>'."\n\t".'</tr>';
-			}
-			$out .= "\n".'</table>'."\n";
-		default :
-			break;
-	}
-	return $out;
-}
-/**
-* Function: makeForm() - assemble and return a form
-*
-* @access private
-* @var string $type - type of form - comment or upload
-*/
-function makeForm($type = 'comment') {
-	global $album, $image;
-	switch($type) {
-		case 'comment' :
-			$form = "\n".'<form name="comment" action="'.$_SERVER['PHP_SELF'].'?album='.$album.'&amp;image='.$image.'" method="post">'."\n";
-			$form .= '<h3>Post a comment</h3>'."\n\t".'<div style="width: 500px; height: 250px;">'."\n\t\t";
-			$form .= '<div style="clear: both; height: 24px;"><span style="width: 100px; float: left; text-align: right;">Name:</span><span style="width: 390px; float: right; text-align: left;"><input type="text" name="commentName" id="commentName" size="30" /></span></div>';
-			$form .= "\n\t\t".'<div style="clear: both; height: 24px;"><span style="width: 100px; float: left; text-align: right;">*Email:</span><span style="width: 390px; float: right; text-align: left;"><input type="text" name="commentEmail" id="commentEmail" size="30" /></span></div>';
-			$form .= "\n\t\t".'<div style="clear: both;"><span style="width: 100px; float: left; text-align: right;">Comment:</span><span style="width: 390px; float: right; text-align: left;"><textarea cols="60" rows="10" name="commentBody" id="commentBody"></textarea></span></div>';
-			$form .= "\n\t\t".'<div style="clear: both; padding-top: 10px; height: 30px;"><span style="width: 100px; float: left; text-align: right;">&nbsp;</span><span style="width: 390px; float: right;"><input type="reset" name="reset" value="Clear" /> <input type="submit" name="submit" value="Post Comment" /></span></div>';
-			$form .= "\n\t\t".'<div style="clear: both; padding-top: 10px; height: 30px; font-size: 9px;">*Your email will be obfuscated to protect against spam harvesters.</div>';
-			$form .= "\n\t".'</div>'."\n";
-			$form .= '</form>'."\n";
-			break;
-		case 'upload' :
-			break;
-		default :
-			break;
-	}
-	return $form;
-}
-/**
 * Function: emailOB() - obfuscate an email address
 *
-* @access private
-* @var string $email - email address to obfuscate
+* @access	private
+* @var		string		$email - email address to obfuscate
 */
 function emailOB($email) {
 	// store obfuscated email
