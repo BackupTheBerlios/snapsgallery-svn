@@ -324,22 +324,34 @@ function comment($action = 'view', $imgID, $albID) {
 */
 function getImage($albumID, $imgFilename, $imgName, $size, $mode) {
 	global $db, $config;
-	switch($mode) {
-		case 'cache' :
-			$outPath = $config['absPath'].$config['cachePath'];
-			$outFilename = md5($imgFilename.'-'.$size).'.jpg';
-			if (file_exists($outPath.$outFilename)) {
-				return '<img src="'.$config['cachePath'].$outFilename.'" alt="'.$imgName.'" title="'.$imgName.'" />';
-			} else {
-				$filename = $config['absPath'].$config['albumsPath'].$albumID.'/'.$imgFilename;
-				include('Snaps!.image.php');
-				return '<img src="'.$config['cachePath'].$outFilename.'" alt="'.$imgName.'" title="'.$imgName.'" />';
-			}
-			break;
-		case 'dynamic' :
-			$filename = $config['albumsPath'].$albumID.'/'.$imgFilename;
-			return '<img src="Snaps!.image.php?filename='.$filename.'&amp;size='.$size.'" alt="'.$imgName.'" title="'.$imgName.'" />';
-			break;
+	if ($config['resizeMethod'] == 'im') {
+		$outPath = $config['absPath'].$config['cachePath'];
+		$outFilename = md5($imgFilename.'-'.$size).'.jpg';
+		if (file_exists($outPath.$outFilename)) {
+			return '<img src="'.$config['cachePath'].$outFilename.'" alt="'.$imgName.'" title="'.$imgName.'" />';
+		} else {
+			$filename = $config['absPath'].$config['albumsPath'].$albumID.'/'.$imgFilename;
+			include('Snaps!.image.php');
+			return '<img src="'.$config['cachePath'].$outFilename.'" alt="'.$imgName.'" title="'.$imgName.'" />';
+		}
+	} else {
+		switch($mode) {
+			case 'cache' :
+				$outPath = $config['absPath'].$config['cachePath'];
+				$outFilename = md5($imgFilename.'-'.$size).'.jpg';
+				if (file_exists($outPath.$outFilename)) {
+					return '<img src="'.$config['cachePath'].$outFilename.'" alt="'.$imgName.'" title="'.$imgName.'" />';
+				} else {
+					$filename = $config['absPath'].$config['albumsPath'].$albumID.'/'.$imgFilename;
+					include('Snaps!.image.php');
+					return '<img src="'.$config['cachePath'].$outFilename.'" alt="'.$imgName.'" title="'.$imgName.'" />';
+				}
+				break;
+			case 'dynamic' :
+				$filename = $config['albumsPath'].$albumID.'/'.$imgFilename;
+				return '<img src="Snaps!.image.php?filename='.$filename.'&amp;size='.$size.'" alt="'.$imgName.'" title="'.$imgName.'" />';
+				break;
+		}
 	}
 }
 /**
