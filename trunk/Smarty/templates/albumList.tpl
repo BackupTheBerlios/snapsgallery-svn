@@ -54,7 +54,7 @@ pieces of information listed above. *}
 			<tr>
 {assign var="col" value="0"}
 {/if}
-				<td class="snapsTable"><a href="{$smarty.server.PHP_SELF}?album={$data[element][0]}"><img src="images/album.png" alt="{$data[element][1]}" title="{$data[element][1]}" /></a><br /><a href="{$smarty.server.PHP_SELF}?album={$data[element][0]}">{$data[element][1]}</a><br />{$data[element][2]}<br /><div class="snapsNotes">({$data[element][3]} items in this album)<br />Last modified: {$data[element][4]|date_format:"%m-%d-%Y"}</div></td>
+				<td class="snapsTable"><a href="{$smarty.server.PHP_SELF}?album={$data[element][0]}">{$data[element][6]}</a><br /><a href="{$smarty.server.PHP_SELF}?album={$data[element][0]}">{$data[element][1]}</a><br />{$data[element][2]}<br /><div class="snapsNotes">({$data[element][3]} items in this album)<br />Last modified: {$data[element][4]|date_format:"%m-%d-%Y"}</div></td>
 {assign var="col" value="`$col+1`"}
 {/section}
 {assign var="remainder" value="`3-$col`"}

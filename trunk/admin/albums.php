@@ -19,7 +19,7 @@ if (!empty($_GET['err'])) {
 /* If we don't have an action, or an album ID, list the albums */
 if (empty($_GET['a']) && empty($_GET['album'])) {
 ?>
-					<tr><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Edit</td><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Delete</td><td style="background: #009; color: #FFF; font-weight: bold; width: 80%;">Album</td></tr>
+					<tr><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Edit</td><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Delete</td><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Thumbnail</td><td style="background: #009; color: #FFF; font-weight: bold; width: 70%;">Album</td></tr>
 <?php
 	/* Get the albums */
 	$result =& $db->query('SELECT * FROM '.TP.'albums');
@@ -32,7 +32,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 		$bg = ' style="background: #CCC;"';
 		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 			$bg = ($bg == ' style="background: #CCC;"' ? '' : ' style="background: #CCC;"');
-			echo "\t".'<tr><td class="adminTD"'.$bg.'><a href="index.php?s=albums&amp;a=edit&amp;album='.$line['albumID'].'"><img src="icons/editalbum.png" alt="Edit" title="Edit" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=albums&amp;a=delete&amp;album='.$line['albumID'].'"><img src="icons/deletealbum.png" alt="Delete" title="Delete" /></a></td><td'.$bg.'>'.$line['albumName'].'</td></tr>'."\n\t\t\t\t";
+			echo "\t".'<tr><td class="adminTD"'.$bg.'><a href="index.php?s=albums&amp;a=edit&amp;album='.$line['albumID'].'"><img src="icons/editalbum.png" alt="Edit" title="Edit" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=albums&amp;a=delete&amp;album='.$line['albumID'].'"><img src="icons/deletealbum.png" alt="Delete" title="Delete" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=albums&amp;a=thumb&amp;album='.$line['albumID'].'"><img src="icons/gallery.png" alt="Set Thumbnail" title="Set Thumbnail" /></a></td><td'.$bg.'>'.$line['albumName'].'</td></tr>'."\n\t\t\t\t";
 		}
 	} else {
 		/* Otherwise, print an error message */
@@ -158,6 +158,48 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 					}
 				} else {
 					$err = 'Album could not be deleted.';
+					echo '<script type="text/javascript">document.location.href = "index.php?s=albums&err='.$err.'";</script>';
+				}
+			}
+			break;
+		case 'thumb' :
+			/* If the form is not submitted, display the select thumbnail form */
+			if (empty($_POST['submit'])) {
+				$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$_GET['album']);
+				if (DB::isError($result)) {
+					die($result->getMessage());
+				}
+				$out = "\t\t\t\t\t".'<form action="index.php?s=albums&amp;a=thumb&amp;album='.$_GET['album'].'" method="post">'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Thumbnail:</td><td><select name="thumb">';
+				while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+					if ($line['albumThumb'] == 1) {
+						$sel = ' selected="selected"';
+					} else {
+						$sel = '';
+					}
+					$out .= '<option value="'.$line['imageID'].$sel.'">'.$line['imageName'].'</option>';
+				}
+				$out .= '</select></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="thumb"><img src="icons/addok.png" alt="Set" title="Set" /> Set</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'</form>'."\n";
+			} else {
+				/* Otherwise, clear the thumbnail, update the images table with the selected thumbnail, print messages */
+				$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$_GET['album']);
+				if (DB::isError($result)) {
+					die($result->getMessage());
+				}
+				while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+					$res =& $db->query('UPDATE '.TP.'images SET albumThumb = 0 WHERE imageID = '.$line['imageID']);
+				}
+				$result =& $db->query('UPDATE '.TP.'images SET albumThumb = 1 WHERE imageID = '.$_POST['thumb']);
+				if (DB::isError($result)) {
+					die($result->getMessage());
+				}
+				if ($db->affectedRows() > 0) {
+					$err = 'Thumbnail set successfully. Note: this will only work if you have \'Selected\' for the thumbnail type.';
+					echo '<script type="text/javascript">document.location.href = "index.php?s=albums&err='.$err.'";</script>';
+				} else {
+					$err = 'There was an error setting the thumbnail.';
 					echo '<script type="text/javascript">document.location.href = "index.php?s=albums&err='.$err.'";</script>';
 				}
 			}

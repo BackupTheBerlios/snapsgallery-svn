@@ -35,7 +35,7 @@ if (!empty($_POST['submit'])) {
 		$imP = '';
 	}
 	/* Update the database and print messages */
-	$sql = 'REPLACE INTO '.TP.'config (var, val) VALUES ("absPath", "'.$_POST['absPath'].'"), ("albumsPath", "'.$_POST['albumsPath'].'"), ("cachePath", "'.$_POST['cachePath'].'"), ("uploadsPath", "'.$_POST['uploadsPath'].'"), ("snapsURL", "'.$_POST['snapsURL'].'"), ("albumsPP", '.$_POST['albumsPP'].'), ("imagesPP", '.$_POST['imagesPP'].'), ("allowComment", '.$aC.'), ("allowSubmit", '.$aS.'), ("enableCache", '.$eC.'), ("resizeMethod", "'.$_POST['resizeMethod'].'"), ("imPath", "'.$imP.'")';
+	$sql = 'REPLACE INTO '.TP.'config (var, val) VALUES ("absPath", "'.$_POST['absPath'].'"), ("albumsPath", "'.$_POST['albumsPath'].'"), ("cachePath", "'.$_POST['cachePath'].'"), ("uploadsPath", "'.$_POST['uploadsPath'].'"), ("snapsURL", "'.$_POST['snapsURL'].'"), ("albumsPP", '.$_POST['albumsPP'].'), ("imagesPP", '.$_POST['imagesPP'].'), ("allowComment", '.$aC.'), ("allowSubmit", '.$aS.'), ("enableCache", '.$eC.'), ("resizeMethod", "'.$_POST['resizeMethod'].'"), ("imPath", "'.$imP.'"), ("albumThumbMode", "'.$_POST['albumThumbMode'].'")';
 	$result =& $db->query($sql);
 	if (DB::isError($result)) {
 		die($result->getMessage());
@@ -62,6 +62,7 @@ if (!empty($_POST['submit'])) {
 					<tr><td style="background: #CCC; width: 30%; text-align: right;">Enable Cache:</td><td colspan="2" style="background: #CCC; text-align: left;"><input type="checkbox" name="enableCache" value="1"<?php echo ($config['enableCache'] == 1) ? ' checked="checked"' : ''; ?> /></td></tr>
 					<tr><td style="width: 30%; text-align: right;">Resize Method:</td><td colspan="2" style="text-align: left;"><select name="resizeMethod" size="1"><option value="gd2"<?php echo ($config['resizeMethod'] == 'gd2') ? ' selected="selected"' : ''; ?>>GD2</option><option value="im"<?php echo ($config['resizeMethod'] == 'im') ? ' selected="selected"' : ''; ?>>ImageMagick</option></select></td></tr>
 					<tr><td style="background: #CCC; width: 30%; text-align: right;">ImageMagick Path:</td><td colspan="2" style="background: #CCC; text-align: left;"><input type="text" name="imPath" size="50" value="<?php echo $config['imPath']; ?>" /></td></tr>
+					<tr><td style="width: 30%; text-align: right;">Album Thumbnails:</td><td colspan="2" style="text-align: left;"><select name="albumThumbMode" size="1"><option value="default"<?php echo ($config['albumThumbMode'] == 'default') ? ' selected="selected"' : ''; ?>>Default (Folder Image)</option><option value="random"<?php echo ($config['albumThumbMode'] == 'random') ? ' selected="selected"' : ''; ?>>Random Image</option><option value="select"<?php echo ($config['albumThumbMode'] == 'select') ? ' selected="selected"' : ''; ?>>Selected Image</option></select></td></tr>
 					<tr><td colspan="3" style="padding-left: 120px;"><button type="submit" name="submit" value="edit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td></tr>
 					</form>
 				</table>

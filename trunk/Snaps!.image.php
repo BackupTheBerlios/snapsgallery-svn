@@ -14,6 +14,32 @@
 /* The file */
 if (!empty($_GET['filename'])) {
 	$filename = $_GET['filename'];
+	/*
+	* Include the DB class from PEAR for database access.
+	* You must have PEAR and the DB package installed to
+	* use Snaps!. If you need instructions for installing PEAR
+	* and the DB package, please see http://pear.php.net
+	*/
+	require_once('DB.php');
+
+	/*
+	* Include the Snaps! configuration file
+	*/
+	require_once('Snaps!.config.php');
+	
+	/* Connect to the database */
+	$db =& DB::connect($dsn);
+	if (DB::isError($db)) {
+		die($db->getMessage());
+	}
+	/* Retrieve configuration information from the database */
+	$result =& $db->query('SELECT * FROM '.TP.'config');
+	if (DB::isError($result)) {
+		die($result->getMessage());
+	}
+	while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+		$config[$line['var']] = $line['val'];
+	}
 }
 if (!empty($_GET['size'])) {
 	$size = $_GET['size'];

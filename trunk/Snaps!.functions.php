@@ -115,6 +115,52 @@ function makePagination($type = 'album', $ID) {
 	return $out;
 }
 /**
+* Function: makeAlbumThumb() - generates an album thumbnail randomly, by selected, or the default folder image
+* ALTER TABLE `snaps_images` ADD `albumThumb` INT( 1 ) DEFAULT '0' NOT NULL
+* @access	public
+* @var		integer		$ID - the id of the album to get a thumb for
+* @var		string		$aName - the album name
+*/
+function makeAlbumThumb($ID, $aName) {
+	global $db, $config;
+	/* Get the images in the album */
+	$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$ID);
+	if (DB::isError($result)) {
+		die($result->getMessage());
+	}
+	$i = 1;
+	$numImages = $result->numRows();
+	while ($line =& $result->fetchRow(DB_FETCHMODE_OBJECT)) {
+		$albImages[$i] = $line->imageID;
+		$i++;
+	}
+	if ($config['albumThumbMode'] == 'select') {
+		$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$ID.' AND albumThumb = 1 LIMIT 1');
+		if (DB::isError($result)) {
+			die($result->getMessage());
+		}
+		if ($result->numRows() > 0) {
+			while ($line =& $result->fetchRow(DB_FETCHMODE_OBJECT)) {
+				$aThumb = getImage($line->albumID, $line->imageFilename, $line->imageName, 64, 'dynamic');
+			}
+		} else {
+			$aThumb = '<img src="images/album.png" alt="'.$aName.'" title="'.$aName.'" />';
+		}
+	} else if ($config['albumThumbMode'] == 'random') {
+		$randImg = $albImages[rand(1,$numImages)];
+		$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$ID.' AND imageID = '.$randImg);
+		if (DB::isError($result)) {
+			die($result->getMessage());
+		}
+		while ($line =& $result->fetchRow(DB_FETCHMODE_OBJECT)) {
+			$aThumb = getImage($line->albumID, $line->imageFilename, $line->imageName, 64, 'dynamic');
+		}
+	} else {
+		$aThumb = '<img src="images/album.png" alt="'.$aName.'" title="'.$aName.'" />';
+	}
+	return $aThumb;
+}
+/**
 * Function: albumList() - lists albums (index page)
 *
 * @access	public
@@ -130,12 +176,13 @@ function albumList() {
 	/* If we have albums, get their information */
 	if ($numAlbums > 0) {
 		$i = 1;
-		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-			$album[$i][0] =  $line['albumID'];
-			$album[$i][1] = stripslashes($line['albumName']);
-			$album[$i][2] = $line['albumDesc'];
-			$album[$i][3] = $line['albumCount'];
-			$album[$i][4] = $line['albumModified'];
+		while ($line =& $result->fetchRow(DB_FETCHMODE_OBJECT)) {
+			$album[$i][0] =  $line->albumID;
+			$album[$i][1] = stripslashes($line->albumName);
+			$album[$i][2] = $line->albumDesc;
+			$album[$i][3] = $line->albumCount;
+			$album[$i][4] = $line->albumModified;
+			$album[$i][6] = makeAlbumThumb($line->albumID, $line->albumName);
 			$i++;
 		}
 		$album[1][5] = makePagination('index', '1');
@@ -158,8 +205,8 @@ function album($albumID) {
 	if (DB::isError($result)) {
 		die($result->getMessage());
 	}
-	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
-	$albumTitle = stripslashes($line['albumName']);
+	$line =& $result->fetchRow(DB_FETCHMODE_OBJECT);
+	$albumTitle = stripslashes($line->albumName);
 	$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$albumID);
 	if (DB::isError($result)) {
 		die($result->getMessage());
@@ -174,26 +221,26 @@ function album($albumID) {
 	/* If we have images, get their information */
 	if ($albumImages > 0) {
 		$i = 1;
-		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-			$image[$i][0] =  '?album='.$albumID.'&amp;image='.$line['imageID'];
-			$image[$i][1] = stripslashes($line['imageName']);
+		while ($line =& $result->fetchRow(DB_FETCHMODE_OBJECT)) {
+			$image[$i][0] =  '?album='.$albumID.'&amp;image='.$line->imageID;
+			$image[$i][1] = stripslashes($line->imageName);
 			if ($config['enableCache'] == 1) {
-				$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'cache');
+				$image[$i][2] = getImage($line->albumID, $line->imageFilename, $line->imageName, 100, 'cache');
 			} else {
-				$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'dynamic');
+				$image[$i][2] = getImage($line->albumID, $line->imageFilename, $line->imageName, 100, 'dynamic');
 			}
-			$image[$i][3] = stripslashes($line['imageDesc']);
-			$image[$i][4] = $line['imageCreated'];
-			$image[$i][5] = $line['imageModified'];
-			$image[$i][6] = $line['imageViews'];
+			$image[$i][3] = stripslashes($line->imageDesc);
+			$image[$i][4] = $line->imageCreated;
+			$image[$i][5] = $line->imageModified;
+			$image[$i][6] = $line->imageViews;
 			if ($config['allowComment'] == 1) {
 				/* Get number of comments for each image */
-				$rslt =& $db->query('SELECT COUNT(*) FROM '.TP.'comments WHERE imageID = '.$line['imageID']);
+				$rslt =& $db->query('SELECT COUNT(*) AS count FROM '.TP.'comments WHERE imageID = '.$line->imageID);
 				if (DB::isError($rslt)) {
 					die($rslt->getMessage());
 				}
-				$ln =& $rslt->fetchRow(DB_FETCHMODE_ASSOC);
-				$image[$i][7] = ($ln['COUNT(*)'] > 1) ? $ln['COUNT(*)'].' comments' : (($ln['COUNT(*)'] == 1) ? $ln['COUNT(*)'].' comment' : 'No comments');
+				$ln =& $rslt->fetchRow(DB_FETCHMODE_OBJECT);
+				$image[$i][7] = ($ln->count > 1) ? $ln->count.' comments' : (($ln->count == 1) ? $ln->count.' comment' : 'No comments');
 			}
 			$i++;
 		}

@@ -66,8 +66,16 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 	} else {
 		$start = 0;
 	}
+	/* Get the album names */
+	$result =& $db->query('SELECT albumID, albumName FROM '.TP.'albums');
+	if (DB::isError($result)) {
+		die($result->getMessage());
+	}
+	while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+		$albums[$line['albumID']] = $line['albumName'];
+	}
 	/* Get the images */
-	$result =& $db->query('SELECT * FROM '.TP.'images LIMIT '.$start.','.$config['imagesPP']);
+	$result =& $db->query('SELECT * FROM '.TP.'images ORDER BY albumID ASC LIMIT '.$start.','.$config['imagesPP']);
 	if (DB::isError($result)) {
 		die($result->getMessage());
 	}
@@ -75,7 +83,20 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 	if ($result->numRows() > 0) {
 		echo "\t\t\t\t";
 		$bg = ' style="background: #CCC;"';
+		$echoed = FALSE;
+		$i = 0;
+		$albID = array_keys($albums);
 		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+			if ($albID[$i] == $line['albumID']) {
+				if (!$echoed) {
+					echo "\t".'<tr><td colspan="5" style="font-weight: bold; background: #999; color: #FFF;">'.$albums[$i+1].'</td></tr>';
+					$echoed = TRUE;
+				} else {
+					$i++;
+				}
+			} else {
+				$echoed = FALSE;
+			}
 			$bg = ($bg == ' style="background: #CCC;"' ? '' : ' style="background: #CCC;"');
 			echo "\t".'<tr><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=edit&amp;image='.$line['imageID'].'"><img src="icons/editimage.png" alt="Edit" title="Edit" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=delete&amp;image='.$line['imageID'].'"><img src="icons/deleteimage.png" alt="Delete" title="Delete" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=move&amp;image='.$line['imageID'].'"><img src="icons/moveimage.png" alt="Move" title="Move" /></a></td><td'.$bg.'><a href="javascript:picture(\''.$config['snapsURL'].$config['albumsPath'].$line['albumID'].'/'.$line['imageFilename'].'\');">'.$line['imageFilename'].'</a></td><td'.$bg.'>'.$line['imageName'].'</tr>'."\n\t\t\t\t";
 		}
