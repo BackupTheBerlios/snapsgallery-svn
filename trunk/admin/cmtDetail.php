@@ -27,24 +27,27 @@ if (DB::isError($result)) {
 while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 	$config[$line['var']] = $line['val'];
 }
-
+/* Make sure we have a valid administrator session */
 if ($_SESSION['loggedIn']) {
-if (!empty($_GET['comment'])) {
-	$com = $_GET['comment'];
-} else {
-	$com = '';
-}
-
-if (!empty($com)) {
-	$result =& $db->query('SELECT * FROM '.TP.'comments WHERE commentID = '.$com);
-	if (DB::isError($result)) {
-		die($result->getMessage());
+	/* Get the comment ID */
+	if (!empty($_GET['comment'])) {
+		$com = $_GET['comment'];
+	} else {
+		$com = '';
 	}
-	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
-	$out = $line['commentBody'].'<br /><br />Posted by: '.$line['commentName'].' on '.date("m-d-Y", $line['commentCreated']);
-} else {
-	$out = 'Error: Invalid Comment ID';
-}
+	/* If we have a comment ID */
+	if (!empty($com)) {
+		/* Get the comment and display it */
+		$result =& $db->query('SELECT * FROM '.TP.'comments WHERE commentID = '.$com);
+		if (DB::isError($result)) {
+			die($result->getMessage());
+		}
+		$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
+		$out = $line['commentBody'].'<br /><br />Posted by: '.$line['commentName'].' on '.date("m-d-Y", $line['commentCreated']);
+	} else {
+		/* Otherwise, print an error message */
+		$out = 'Error: Invalid Comment ID';
+	}
 ?>
 <html>
 <head>
@@ -63,6 +66,7 @@ if (!empty($com)) {
 </html>
 <?php
 } else {
+	/* Otherwise, fail. */
 	die('Security violation.');
 }
 ?>

@@ -1,4 +1,5 @@
 <?php
+/* Get error messages, if set */
 if (!empty($_GET['err'])) {
 	$err = $_GET['err'];
 } else {
@@ -10,19 +11,22 @@ if (!empty($_GET['err'])) {
 			<div class="box">
 				<script type="text/javascript">
 					function cancel() {
-						document.location.href = 'index.php?s=albums';
+						document.location.href = '<?php echo $_SERVER['PHP_SELF']; ?>?s=albums';
 					}
 				</script>
 				<table cellpadding="2" cellspacing="0" border="0" style="width: 100%;">
 <?php
+/* If we don't have an action, or an album ID, list the albums */
 if (empty($_GET['a']) && empty($_GET['album'])) {
 ?>
 					<tr><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Edit</td><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Delete</td><td style="background: #009; color: #FFF; font-weight: bold; width: 80%;">Album</td></tr>
 <?php
+	/* Get the albums */
 	$result =& $db->query('SELECT * FROM '.TP.'albums');
 	if (DB::isError($result)) {
 		die($result->getMessage());
 	}
+	/* If we have albums, display the list */
 	if ($result->numRows() > 0) {
 		echo "\t\t\t\t";
 		$bg = ' style="background: #CCC;"';
@@ -31,6 +35,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 			echo "\t".'<tr><td class="adminTD"'.$bg.'><a href="index.php?s=albums&amp;a=edit&amp;album='.$line['albumID'].'"><img src="icons/editalbum.png" alt="Edit" title="Edit" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=albums&amp;a=delete&amp;album='.$line['albumID'].'"><img src="icons/deletealbum.png" alt="Delete" title="Delete" /></a></td><td'.$bg.'>'.$line['albumName'].'</td></tr>'."\n\t\t\t\t";
 		}
 	} else {
+		/* Otherwise, print an error message */
 		echo '<tr><td colspan="3" class="adminTD">There are no albums.</td></tr>';
 	}
 ?>
@@ -38,8 +43,10 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 				<br /><span style="padding: 5px; font-weight: bold;"><a href="index.php?s=albums&amp;a=new"><img style="vertical-align: bottom;" src="icons/newalbum.png" alt="New Album" title="New Album" /></a> Create New Album</span>
 <?php
 } else {
+	/* Otherwise, handle the action */
 	switch($_GET['a']) {
 		case 'edit' :
+			/* If the form is not submitted, display the edit form */
 			if (empty($_POST['submit'])) {
 				$result =& $db->query('SELECT * FROM '.TP.'albums WHERE albumID = '.$_GET['album']);
 				if (DB::isError($result)) {
@@ -53,6 +60,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_edit_on.png\';" onmouseout="this.src=\'icons/btn_edit.png\';" type="image" src="icons/btn_edit.png" name="submit" value="Edit" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="document.location.href=\'index.php?s=albums\'; return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, handle the edit, print messages */
 				$result =& $db->query('UPDATE '.TP.'albums SET albumName = "'.mysql_escape_string($_POST['albumName']).'", albumDesc = "'.mysql_escape_string($_POST['albumDesc']).'", albumModified = UNIX_TIMESTAMP() WHERE albumID = '.$_GET['album']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -67,6 +75,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 			}
 			break;
 		case 'new' :
+			/* If the form is not submitted, display the form */
 			if (empty($_POST['submit'])) {
 				$out = "\t\t\t\t\t".'<form action="index.php?s=albums&amp;a=new" method="post">'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Create New Album</h4></td></tr>';
@@ -75,6 +84,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_create_on.png\';" onmouseout="this.src=\'icons/btn_create.png\';" type="image" src="icons/btn_create.png" name="submit" value="Create" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="document.location.href=\'index.php?s=albums\'; return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, handle the add - add album to database, create album folder, print messages */
 				$result =& $db->query('INSERT INTO '.TP.'albums (albumID, albumName, albumDesc, albumCount, albumCreated, albumModified) VALUES ("", "'.mysql_escape_string($_POST['albumName']).'", "'.mysql_escape_string($_POST['albumDesc']).'", "", UNIX_TIMESTAMP(), UNIX_TIMESTAMP())');
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -99,7 +109,9 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 			}
 			break;
 		case 'delete' :
+			/* If the form is not submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the album's information */
 				$result =& $db->query('SELECT * FROM '.TP.'albums WHERE albumID = '.$_GET['album']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -107,6 +119,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 				$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
 				$albumDir = $config['absPath'].$config['albumsPath'].$line['albumID'];
 				$files = 0;
+				/* Get a count of the number of files in the directory (check to verify it is empty) */
 				if (file_exists($albumDir)) {
 					$dir = dir($albumDir);
 					while (false !== $entry = $dir->read()) {
@@ -115,6 +128,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 						}
 						$files++;
 					}
+					/* If the folder is empty, print form/confirmation message */
 					if ($files == 0) {
 						$out = "\t\t\t\t\t".'<form action="index.php?s=albums&amp;a=delete&amp;album='.$_GET['album'].'" method="post">'."\n";
 						$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete Album</h4></td></tr>';
@@ -122,11 +136,13 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 						$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_delete_on.png\';" onmouseout="this.src=\'icons/btn_delete.png\';" type="image" src="icons/btn_delete.png" name="submit" value="Delete" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="document.location.href=\'index.php?s=albums\'; return false;" /></td></tr>'."\n";
 						$out .= "\t\t\t\t\t".'</form>'."\n";
 					} else {
+						/* Otherwise, print error message */
 						$out = "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete Album</h4></td></tr>';
 						$out .= "\t\t\t\t\t".'<tr><td colspan="2">Cannot delete <span style="font-weight: bold;">'.$line['albumName'].'</span> because it contains images. Please remove the images first.</td></tr>';
 					}
 				}
 			} else {
+				/* Otherwise, handle the deletion - from database, delete physical folder, print messages */
 				$result =& $db->query('DELETE FROM '.TP.'albums WHERE albumID = '.$_GET['album']);
 				if (DB::isError($result)) {
 					die($result->getMessage());

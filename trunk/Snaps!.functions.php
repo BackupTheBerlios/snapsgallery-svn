@@ -1,6 +1,6 @@
 <?php
 
-/* sNaps! Gallery Functions */
+/* Snaps! Gallery Functions */
 /* ©2004 The Sonic Group, LLC */
 
 /* Retrieve configuration information from the database */

@@ -28,8 +28,9 @@ if (DB::isError($result)) {
 while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 	$config[$line['var']] = $line['val'];
 }
-
+/* Check to make sure we have a valid administrator session */
 if (isset($_SESSION['loggedIn'])) {
+	/* Get section, if set */
 	if (!empty($_GET['s'])) {
 		$section = $_GET['s'];
 	} else {
@@ -61,7 +62,9 @@ if (isset($_SESSION['loggedIn'])) {
 			</td>
 			<td style="vertical-align: top;" id="content">
 <?php
+	/* If we have an action */
 	if(isset($_GET['action'])) {
+		/* If the action is logout, log the user out, print messages */
 		if ($_GET['action'] == 'logout') {
 			session_unset();
 			session_destroy();
@@ -69,6 +72,7 @@ if (isset($_SESSION['loggedIn'])) {
 				echo '<span style="font-weight: bold; color: #900;">You have been logged out.</span><br /><br /><a href="../index.php">Gallery</a> index.<br /><br /><a href="../index.php?action=login">Log In</a> again.';
 			}
 		} else if ($_GET['action'] == 'optimize') {
+			/* Otherwise, if the action is optimize, optimize the tables, print messages */
 			$result =& $db->query('OPTIMIZE TABLE `'.TP.'albums` , `'.TP.'comments` , `'.TP.'config` , `'.TP.'images` , `'.TP.'uploads` , `'.TP.'users`');
 			if (DB::isError($result)) {
 				die($result->getMessage());
@@ -81,6 +85,7 @@ if (isset($_SESSION['loggedIn'])) {
 			echo '</div>';
 		}
 	} else {
+		/* Otherwise, if the section is NULL, include the main page (statistics), otherwise, include the appropriate section page */
 		if ($section == '') {
 			include('main.php');
 		} else {

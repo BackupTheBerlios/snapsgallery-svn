@@ -3,6 +3,7 @@
 				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 					<tr><td style="text-align: right;">Albums:</td><td>
 <?php
+/* Get number of albums */
 $result =& $db->query('SELECT COUNT(*) FROM '.TP.'albums');
 if (DB::isError($result)) {
 	die($result->getMessage());
@@ -12,6 +13,7 @@ echo $line['COUNT(*)'].'</td></tr>';
 ?>
 					<tr><td style="background: #CCC; text-align: right;">Images:</td><td style="background: #CCC;">
 <?php
+/* Get number of images */
 $result =& $db->query('SELECT COUNT(*) FROM '.TP.'images');
 if (DB::isError($result)) {
 	die($result->getMessage());
@@ -21,6 +23,7 @@ echo $line['COUNT(*)'].'</td></tr>';
 ?>
 					<tr><td style="text-align: right;">Users:</td><td>
 <?php
+/* Get number of administrators */
 $result =& $db->query('SELECT COUNT(*) FROM '.TP.'users');
 if (DB::isError($result)) {
 	die($result->getMessage());
@@ -30,6 +33,7 @@ echo $line['COUNT(*)'].'</td></tr>';
 ?>
 					<tr><td style="background: #CCC; text-align: right;">Comments:</td><td style="background: #CCC;">
 <?php
+/* Get number of comments */
 $result =& $db->query('SELECT COUNT(*) FROM '.TP.'comments');
 if (DB::isError($result)) {
 	die($result->getMessage());
@@ -39,6 +43,7 @@ echo $line['COUNT(*)'].'</td></tr>';
 ?>
 					<tr><td style="text-align: right;">Most Viewed:</td><td>
 <?php
+/* Get information for most viewed image */
 $result =& $db->query('SELECT * FROM '.TP.'images ORDER BY imageViews DESC');
 if (DB::isError($result)) {
 	die($result->getMessage());

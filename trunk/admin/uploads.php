@@ -1,4 +1,5 @@
 <?php
+/* Get error messages, if set */
 if (!empty($_GET['err'])) {
 	$err = $_GET['err'];
 } else {
@@ -10,7 +11,7 @@ if (!empty($_GET['err'])) {
 			<div class="box">
 				<script type="text/javascript">
 					function cancel() {
-						document.location.href = 'index.php?s=uploads';
+						document.location.href = '<?php echo $_SERVER['PHP_SELF']; ?>?s=uploads';
 					}
 					function picture(id) {
 						window.open('picDetail.php?image='+id, 'picDetail', 'width=640,height=500,scrollbars=yes,toolbar=no,location=no,directories=no,status=no,menubar=no');
@@ -18,14 +19,17 @@ if (!empty($_GET['err'])) {
 				</script>
 				<table cellpadding="2" cellspacing="0" border="0" style="width: 100%;">
 <?php
+/* If we don't have an action, or an image */
 if (empty($_GET['a']) && empty($_GET['image'])) {
 ?>
 					<tr><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Edit</td><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Delete</td><td style="background: #009; color: #FFF; font-weight: bold; width: 10%; text-align: center;">Add</td><td style="background: #009; color: #FFF; font-weight: bold; width: 30%;">Image Name</td><td style="background: #009; color: #FFF; font-weight: bold; width: 40%;">Image Description</td></tr>
 <?php
+	/* Get uploads */
 	$result =& $db->query('SELECT * FROM '.TP.'uploads');
 	if (DB::isError($result)) {
 		die($result->getMessage());
 	}
+	/* If we have uploads, display list */
 	if ($result->numRows() > 0) {
 		echo "\t\t\t\t";
 		$bg = ' style="background: #CCC;"';
@@ -34,15 +38,19 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 			echo "\t".'<tr><td class="adminTD"'.$bg.'><a href="index.php?s=uploads&amp;a=edit&amp;image='.$line['upID'].'"><img src="icons/editimage.png" alt="Edit" title="Edit" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=uploads&amp;a=delete&amp;image='.$line['upID'].'"><img src="icons/deleteimage.png" alt="Delete" title="Delete" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=uploads&amp;a=move&amp;image='.$line['upID'].'"><img src="icons/moveimage.png" alt="Add to Album" title="Add to Album" /></a></td><td'.$bg.'><a href="javascript:picture('.$line['upID'].');">'.$line['upName'].'</a></td><td'.$bg.' class="snapsNotes">'.$line['upDesc'].'</tr>'."\n\t\t\t\t";
 		}
 	} else {
+		/* Otherwise, display error message */
 		echo '<tr><td colspan="5" class="adminTD">There are no uploads.</td></tr>';
 	}
 ?>
 				</table>
 <?php
 } else {
+	/* Otherwise, handle the action */
 	switch($_GET['a']) {
 		case 'edit' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the upload's information, display edit form */
 				$result =& $db->query('SELECT * FROM '.TP.'uploads WHERE upID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -55,6 +63,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_edit_on.png\';" onmouseout="this.src=\'icons/btn_edit.png\';" type="image" src="icons/btn_edit.png" name="submit" value="Edit" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, update the image, print messages */
 				$result =& $db->query('UPDATE '.TP.'uploads SET upName = "'.mysql_escape_string($_POST['upName']).'", upDesc = "'.mysql_escape_string($_POST['upDesc']).'" WHERE upID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -69,13 +78,16 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 			}
 			break;
 		case 'delete' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the image's information */
 				$result =& $db->query('SELECT * FROM '.TP.'uploads WHERE upID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
 				}
 				$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
 				$img = $config['absPath'].$config['uploadsPath'].$line['upFilename'];
+				/* If the file exists, display the confirmation form */
 				if (file_exists($img)) {
 					$out = "\t\t\t\t\t".'<form action="index.php?s=uploads&amp;a=delete&amp;image='.$_GET['image'].'" method="post">'."\n";
 					$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete Uploaded Image ('.$line['upName'].')</h4></td></tr>';
@@ -83,10 +95,12 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_delete_on.png\';" onmouseout="this.src=\'icons/btn_delete.png\';" type="image" src="icons/btn_delete.png" name="submit" value="Delete" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 					$out .= "\t\t\t\t\t".'</form>'."\n";
 				} else {
+					/* Otherwise, print error message */
 					$err = 'File does not exist!';
 					echo '<script type="text/javascript">document.location.href = "index.php?s=uploads&err='.$err.'";</script>';
 				}
 			} else {
+				/* Otherwise, delete the image fomr the database, and physical file from uploads folder, print messages */
 				$result =& $db->query('SELECT * FROM '.TP.'uploads WHERE upID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -112,7 +126,9 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 			}
 			break;
 		case 'move' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the image's information and list of albums, display move/add to album form */
 				$result =& $db->query('SELECT * FROM '.TP.'uploads WHERE upID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -132,6 +148,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_add_on.png\';" onmouseout="this.src=\'icons/btn_add.png\';" type="image" src="icons/btn_add.png" name="submit" value="Add" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, get image's information, update album image count, add the image to database, move physical image, delete from uploads table, print messages */
 				$result =& $db->query('SELECT * FROM '.TP.'uploads WHERE upID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());

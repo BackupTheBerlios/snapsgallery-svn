@@ -1,4 +1,5 @@
 <?php
+/* Get error messages, if set */
 if (!empty($_GET['err'])) {
 	$err = $_GET['err'];
 } else {
@@ -10,7 +11,9 @@ if (!empty($_GET['err'])) {
 			<div class="box">
 				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 <?php
+/* If the form was submitted */
 if (!empty($_POST['submit'])) {
+	/* Set values from checkboxes. The form does not send a value if the checkbox is unchecked, so we must manually set the value for the query if unchecked */
 	if (empty($_POST['allowComment'])) {
 		$aC = 0;
 	} else {
@@ -26,6 +29,7 @@ if (!empty($_POST['submit'])) {
 	} else {
 		$eC = $_POST['enableCache'];
 	}
+	/* Update the database and print messages */
 	$sql = 'REPLACE INTO '.TP.'config (var, val) VALUES ("absPath", "'.$_POST['absPath'].'"), ("albumsPath", "'.$_POST['albumsPath'].'"), ("cachePath", "'.$_POST['cachePath'].'"), ("uploadsPath", "'.$_POST['uploadsPath'].'"), ("snapsURL", "'.$_POST['snapsURL'].'"), ("albumsPP", '.$_POST['albumsPP'].'), ("imagesPP", '.$_POST['imagesPP'].'), ("allowComment", '.$aC.'), ("allowSubmit", '.$aS.'), ("enableCache", '.$eC.')';
 	$result =& $db->query($sql);
 	if (DB::isError($result)) {

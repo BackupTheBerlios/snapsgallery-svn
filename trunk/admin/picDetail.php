@@ -27,24 +27,27 @@ if (DB::isError($result)) {
 while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 	$config[$line['var']] = $line['val'];
 }
-
+/* Check to make sure we have a valid administrator session */
 if ($_SESSION['loggedIn']) {
-if (!empty($_GET['image'])) {
-	$img = $_GET['image'];
-} else {
-	$img = '';
-}
-
-if (!empty($img)) {
-	$result =& $db->query('SELECT * FROM '.TP.'uploads WHERE upID = '.$img);
-	if (DB::isError($result)) {
-		die($result->getMessage());
+	/* Get the image ID */
+	if (!empty($_GET['image'])) {
+		$img = $_GET['image'];
+	} else {
+		$img = '';
 	}
-	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
-	$out = $line['upName'].'<br /><br />Submitted by: <a href="mailto:'.$line['upSubEmail'].'">'.$line['upSubName'].'</a> on '.date("m-d-Y", $line['upCreated']).'<br /><br /><img src="../Snaps!.image.php?image='.str_replace(" ", "%20", $config['absPath'].$config['uploadsPath'].$line['upFilename']).'&size=500">';
-} else {
-	$out = 'Error: Invalid Upload ID';
-}
+	/* If we have an image ID */
+	if (!empty($img)) {
+		/* Get and display the image's information */
+		$result =& $db->query('SELECT * FROM '.TP.'uploads WHERE upID = '.$img);
+		if (DB::isError($result)) {
+			die($result->getMessage());
+		}
+		$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
+		$out = $line['upName'].'<br /><br />Submitted by: <a href="mailto:'.$line['upSubEmail'].'">'.$line['upSubName'].'</a> on '.date("m-d-Y", $line['upCreated']).'<br /><br /><img src="../Snaps!.image.php?image='.str_replace(" ", "%20", $config['absPath'].$config['uploadsPath'].$line['upFilename']).'&size=500">';
+	} else {
+		/* Otherise, print an error message */
+		$out = 'Error: Invalid Upload ID';
+	}
 ?>
 <html>
 <head>
@@ -63,6 +66,7 @@ if (!empty($img)) {
 </html>
 <?php
 } else {
+	/* Otherwise, fail. */
 	die('Security violation.');
 }
 ?>

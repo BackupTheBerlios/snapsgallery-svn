@@ -1,4 +1,5 @@
 <?php
+/* Get error messages, if set */
 if (!empty($_GET['err'])) {
 	$err = $_GET['err'];
 } else {
@@ -46,24 +47,28 @@ function makePagination($start) {
 			<div class="box">
 				<script type="text/javascript">
 					function cancel() {
-						document.location.href = 'index.php?s=images';
+						document.location.href = '<?php echo $_SERVER['PHP_SELF']; ?>?s=images';
 					}
 				</script>				
 				<table cellpadding="2" cellspacing="0" border="0" style="width: 100%;">
 <?php
+/* If no action is set, and we don't have an image ID, display the list of images */
 if (empty($_GET['a']) && empty($_GET['image'])) {
 ?>
 					<tr><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Edit</td><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Delete</td><td style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Move</td><td style="background: #009; color: #FFF; font-weight: bold; width: 30%;">File Name</td><td style="background: #009; color: #FFF; font-weight: bold; width: 40%;">Image Name</td></tr>
 <?php
+	/* Get the start value for the list of images */
 	if (!empty($_GET['start'])) {
 		$start = $_GET['start'];
 	} else {
 		$start = 0;
 	}
+	/* Get the images */
 	$result =& $db->query('SELECT * FROM '.TP.'images LIMIT '.$start.','.$config['imagesPP']);
 	if (DB::isError($result)) {
 		die($result->getMessage());
 	}
+	/* If we have rows, there are images, echo them */
 	if ($result->numRows() > 0) {
 		echo "\t\t\t\t";
 		$bg = ' style="background: #CCC;"';
@@ -73,6 +78,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 		}
 		echo "\t".'<tr><td class="adminTD" colspan="5" style="text-align: right;">'.makePagination($start).'</td></tr>';
 	} else {
+		/* No images defined */
 		echo '<tr><td colspan="5" class="adminTD">There are no images.</td></tr><tr>';
 	}
 ?>
@@ -80,9 +86,12 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 			<br /><span style="padding: 5px; font-weight: bold;"><a href="index.php?s=images&amp;a=new"><img style="vertical-align: bottom;" src="icons/newimage.png" alt="New Image" title="New Image" /></a> Add New Image</span>
 <?php
 } else {
+	/* Otherwise, handle the action */
 	switch($_GET['a']) {
 		case 'edit' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the image's information and display the form to edit */
 				$result =& $db->query('SELECT * FROM '.TP.'images WHERE imageID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -95,6 +104,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_edit_on.png\';" onmouseout="this.src=\'icons/btn_edit.png\';" type="image" src="icons/btn_edit.png" name="submit" value="Edit" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, update the information in the database and display messages */
 				$result =& $db->query('UPDATE '.TP.'images SET imageName = "'.mysql_escape_string($_POST['imageName']).'", imageDesc = "'.mysql_escape_string($_POST['imageDesc']).'", imageModified = UNIX_TIMESTAMP() WHERE imageID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -109,14 +119,18 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 			}
 			break;
 		case 'new' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Check to make sure there are albums to add images to */
 				$result =& $db->query('SELECT * FROM '.TP.'albums');
 				if (DB::isError($result)) {
 					die($result->getMessage());
 				}
+				/* If there are no albums, print an error message */
 				if ($result->numRows() == 0) {
 					$out = "\t\t\t\t\t".'<tr><td colspan="2">You have not created any albums yet!</td></tr>'."\n";
 				} else {
+					/* Otherwise, display the add form */
 					$out = "\t\t\t\t\t".'<form enctype="multipart/form-data" action="index.php?s=images&amp;a=new" method="post">'."\n";
 					$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Upload New Image</h4></td></tr>';
 					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Image Name:</td><td><input type="text" size="30" name="imageName" /></td></tr>'."\n";
@@ -131,6 +145,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 					$out .= "\t\t\t\t\t".'</form>'."\n";
 				}
 			} else {
+				/* Otherwise, handle the file upload and add to database, print messages */
 				$uploaddir = $config['absPath'].$config['albumsPath'].$_POST['albumID'].'/';
 				$uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 				if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
@@ -156,13 +171,16 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 			}
 			break;
 		case 'delete' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the image's information */
 				$result =& $db->query('SELECT * FROM '.TP.'images WHERE imageID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
 				}
 				$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
 				$img = $config['absPath'].$config['albumsPath'].$line['albumID'].'/'.$line['imageFilename'];
+				/* If the file actually exists print the image's information and confirmation request */
 				if (file_exists($img)) {
 					$out = "\t\t\t\t\t".'<form action="index.php?s=images&amp;a=delete&amp;image='.$_GET['image'].'" method="post">'."\n";
 					$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete Image ('.$line['imageName'].')</h4></td></tr>';
@@ -170,10 +188,12 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_delete_on.png\';" onmouseout="this.src=\'icons/btn_delete.png\';" type="image" src="icons/btn_delete.png" name="submit" value="Delete" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 					$out .= "\t\t\t\t\t".'</form>'."\n";
 				} else {
+					/* Otherwise, print an error */
 					$err = 'File does not exist!';
 					echo '<script type="text/javascript">document.location.href = "index.php?s=images&err='.$err.'";</script>';
 				}
 			} else {
+				/* Otherwise, handle the deletion from the database and of the file, print messages */
 				$result =& $db->query('SELECT * FROM '.TP.'images WHERE imageID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -203,7 +223,9 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 			}
 			break;
 		case 'move' :
+			/* If the form is not submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the image's name and album, the album information, and a list of all albums, display the form */
 				$result =& $db->query('SELECT imageName, albumID FROM '.TP.'images WHERE imageID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -230,6 +252,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_move_on.png\';" onmouseout="this.src=\'icons/btn_move.png\';" type="image" src="icons/btn_move.png" name="submit" value="Move" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, handle the move - update database, move physical file, update database records for image counts and modification times, print messages */
 				$result =& $db->query('SELECT * FROM '.TP.'images WHERE imageID = '.$_GET['image']);
 				if (DB::isError($result)) {
 					die($result->getMessage());

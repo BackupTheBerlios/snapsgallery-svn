@@ -1,4 +1,5 @@
 <?php
+/* Get error messages, if set */
 if (!empty($_GET['err'])) {
 	$err = $_GET['err'];
 } else {
@@ -10,7 +11,7 @@ if (!empty($_GET['err'])) {
 			<div class="box">
 				<script type="text/javascript">
 					function cancel() {
-						document.location.href = 'index.php?s=users';
+						document.location.href = '<?php echo $_SERVER['PHP_SELF']; ?>?s=users';
 					}
 					function verifyPass() {
 						p1 = document.getElementById('password').value;
@@ -25,10 +26,12 @@ if (!empty($_GET['err'])) {
 				</script>
 				<table cellpadding="2" cellspacing="0" border="0" style="width: 100%;">
 <?php
+/* If we don't have an action, or a user */
 if (empty($_GET['a']) && empty($_GET['user'])) {
 ?>
 					<tr><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Edit</td><td class="adminTD" style="background: #009; color: #FFF; font-weight: bold; width: 10%;">Delete</td><td style="background: #009; color: #FFF; font-weight: bold; width: 80%;">User's Name</td></tr>
 <?php
+	/* Get and display users - note: we always have at least 1 user (from the installation process) */
 	$result =& $db->query('SELECT * FROM '.TP.'users');
 	if (DB::isError($result)) {
 		die($result->getMessage());
@@ -44,9 +47,12 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 				<br /><span style="padding: 5px; font-weight: bold;"><a href="index.php?s=users&amp;a=new"><img style="vertical-align: bottom;" src="icons/newuser.png" alt="New User" title="New User" /></a> Add New User</span>
 <?php
 } else {
+	/* Otherwise, handle the action */
 	switch($_GET['a']) {
 		case 'edit' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Get the user's information, and display the edit form */
 				$result =& $db->query('SELECT * FROM '.TP.'users WHERE userID = '.$_GET['user']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -63,6 +69,7 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_edit_on.png\';" onmouseout="this.src=\'icons/btn_edit.png\';" type="image" src="icons/btn_edit.png" name="submit" value="Edit" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, check for password change and use appropriate query, print messages */
 				if (empty($_POST['password']) && empty($_POST['password2'])) {
 					$result =& $db->query('UPDATE '.TP.'users SET userFname = "'.mysql_escape_string($_POST['userFname']).'", userLname = "'.mysql_escape_string($_POST['userLname']).'", userEmail = "'.mysql_escape_string($_POST['userEmail']).'", username = "'.mysql_escape_string($_POST['username']).'" WHERE userID = '.$_GET['user']);
 				} else {
@@ -81,6 +88,7 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 			}
 			break;
 		case 'new' :
+			/* If the form has not been submitted, print add user form */
 			if (empty($_POST['submit'])) {
 				$out = "\t\t\t\t\t".'<form action="index.php?s=users&amp;a=new" method="post" onsubmit="return verifyPass();">'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Create New User</h4></td></tr>';
@@ -93,6 +101,7 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_create_on.png\';" onmouseout="this.src=\'icons/btn_create.png\';" type="image" src="icons/btn_create.png" name="submit" value="Edit" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, add the user, print messages */
 				$result =& $db->query('INSERT INTO '.TP.'users (userID, userFname, userLname, userEmail, username, userpass) VALUES ("", "'.mysql_escape_string($_POST['userFname']).'", "'.mysql_escape_string($_POST['userLname']).'", "'.mysql_escape_string($_POST['userEmail']).'", "'.mysql_escape_string($_POST['username']).'", "'.md5($_POST['password']).'")');
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -107,7 +116,9 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 			}
 			break;
 		case 'delete' :
+			/* If the form has not been submitted */
 			if (empty($_POST['submit'])) {
+				/* Get user's information, and print confirmation form */
 				$result =& $db->query('SELECT * FROM '.TP.'users WHERE userID = '.$_GET['user']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
@@ -119,6 +130,7 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><input onmouseover="this.src=\'icons/btn_delete_on.png\';" onmouseout="this.src=\'icons/btn_delete.png\';" type="image" src="icons/btn_delete.png" name="submit" value="Delete" /></td><td><input onmouseover="this.src=\'icons/btn_cancel_on.png\';" onmouseout="this.src=\'icons/btn_cancel.png\';" type="image" src="icons/btn_cancel.png" onclick="cancel(); return false;" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
+				/* Otherwise, delete the user and print messages */
 				$result =& $db->query('DELETE FROM '.TP.'users WHERE userID = '.$_GET['user']);
 				if (DB::isError($result)) {
 					die($result->getMessage());
