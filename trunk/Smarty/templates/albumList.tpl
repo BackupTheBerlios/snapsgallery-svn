@@ -53,6 +53,7 @@ pieces of information listed above. *}
 			<tr><td class="snapsTable">{$data}</td></tr>
 {/if}
 		</table>
+		<div class="snapsCrumb" style="text-align: right;">{$data[1][5]}</div><br />
 	</div>
 <div class="snapsCopy">Powered by <a href="http://labs.sonicdesign.us/projects/Snaps!/">Snaps!</a> v{$config.version}<p class="snapsNotes">This program uses icons from the <a href="http://www.kde.org">KDE</a> Project by <a href="http://www.everaldo.com">Everaldo Coelho</a> released under the <a href="http://www.gnu.org/licenses/gpl.html">GNU GPL</a>, and the Universal PNG Enabler from <a href="http://dsandler.org/">Dan Sandler</a>, which incorporates code from <a href="http://www.youngpup.net/">Aaron Boodman</a> (inline) and <a href="http://www.allinthehead.com/">Drew McLellan</a> (background).</p></div>
 </body>

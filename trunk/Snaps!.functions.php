@@ -112,9 +112,9 @@ function makePagination($type = 'album', $ID) {
 * @access	public
 */
 function albumList() {
-	global $db;
+	global $db, $start, $config;
 	/* Get the number of albums */
-	$result =& $db->query('SELECT * FROM '.TP.'albums');
+	$result =& $db->query('SELECT * FROM '.TP.'albums LIMIT '.$start.','.$config['albumsPP']);
 	if (DB::isError($result)) {
 		die($result->getMessage());
 	}
