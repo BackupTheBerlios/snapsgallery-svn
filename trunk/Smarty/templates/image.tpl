@@ -54,7 +54,7 @@ $data[1][8] contains the comments and comment form. *}
 {else}
 			{$comment}
 {/if}
-			<form name="comment" action="{$smarty.server.PHP_SELF}?album={$data[1][5]}&amp;image={$comment[1][4]}" method="post">
+			<form name="comment" action="{$smarty.server.PHP_SELF}?album={$data[1][5]}&amp;image={$data[1][8]}" method="post">
 			<h3>Post a comment</h3>
 			<div style="width: 500px; height: 250px;">
 				<div style="clear: both; height: 24px;"><span style="width: 100px; float: left; text-align: right;">Name:</span><span style="width: 390px; float: right; text-align: left;"><input type="text" name="commentName" id="commentName" size="30" /></span></div>

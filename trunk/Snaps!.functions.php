@@ -226,6 +226,7 @@ function image($albumID, $imgID) {
 		$i++;
 	}
 	$image[1][7] = crumb('index', $albumTitle, $image[1][0]);
+	$image[1][8] = $imgID;
 	return $image;
 }
 /**
