@@ -104,7 +104,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Edit Image</h4></td></tr>';
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Image Name:</td><td><input type="text" size="30" name="imageName" value="'.$line['imageName'].'" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right; vertical-align: top;">Image Description:</td><td><textarea cols="50" rows="5" name="imageDesc">'.$line['imageDesc'].'</textarea></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="edit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, update the information in the database and display messages */
@@ -144,7 +144,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 					}
 					$out .= '</select></td></tr>'."\n";
 					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">File:</td><td><input type="hidden" name="MAX_FILE_SIZE" value="2000000" /><input name="userfile" type="file" /></td></tr>'."\n";
-					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Add" title="Add" /> Add</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="new"><img src="icons/addok.png" alt="Add" title="Add" /> Add</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 					$out .= "\t\t\t\t\t".'</form>'."\n";
 				}
 			} else {
@@ -188,7 +188,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 					$out = "\t\t\t\t\t".'<form action="index.php?s=images&amp;a=delete&amp;image='.$_GET['image'].'" method="post">'."\n";
 					$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete Image ('.$line['imageName'].')</h4></td></tr>';
 					$out .= "\t\t\t\t\t".'<tr><td colspan="2"><input type="hidden" name="album" value="'.$line['albumID'].'" />Are you sure you want to delete: <span style="font-weight: bold;">'.$line['imageName'].'</span>?</td></tr>'."\n";
-					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+					$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="delete"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 					$out .= "\t\t\t\t\t".'</form>'."\n";
 				} else {
 					/* Otherwise, print an error */
@@ -252,7 +252,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 					$out .= '<option value="'.$ln['albumID'].'">'.$ln['albumName'].'</option>';
 				}
 				$out .= '</select></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Move" title="Move" /> Move</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="move"><img src="icons/addok.png" alt="Move" title="Move" /> Move</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, handle the move - update database, move physical file, update database records for image counts and modification times, print messages */

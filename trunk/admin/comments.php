@@ -64,7 +64,7 @@ if (empty($_GET['a']) && empty($_GET['comment'])) {
 				$out = "\t\t\t\t\t".'<form action="index.php?s=comments&amp;a=delete&amp;comment='.$_GET['comment'].'" method="post">'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete Comment</h4></td></tr>';
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2">Are you sure you want to delete this comment?<br /><br /><div style="margin: 0 20px; padding: 3px; border: 1px solid #666; background: #FFF; font-size: 11px;">Comment for: '.$ln['imageName'].'<br />'.$line['commentBody'].'<br />by: '.$line['commentName'].'</div><br /></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="delete"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, delete the comment and print messages */
@@ -108,7 +108,7 @@ if (empty($_GET['a']) && empty($_GET['comment'])) {
 					$out .= '<option value="'.$ln['imageID'].'">'.$ln['imageName'].'</option>';
 				}
 				$out .= '</select></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Move" title="Move" /> Move</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="move"><img src="icons/addok.png" alt="Move" title="Move" /> Move</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, update the database, print messages */

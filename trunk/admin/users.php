@@ -66,7 +66,7 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Username:</td><td><input type="text" size="30" name="username" value="'.$line['username'].'" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Password:</td><td><input type="password" size="10" id="password" name="password" value="" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Verify:</td><td><input type="password" size="10" id="password2" name="password2" value="" /></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="edit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, check for password change and use appropriate query, print messages */
@@ -98,7 +98,7 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Username:</td><td><input type="text" size="30" name="username" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Password:</td><td><input type="password" size="10" id="password" name="password" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Verify:</td><td><input type="password" size="10" id="password2" name="password2" /></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Create" title="Create" /> Create</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="new"><img src="icons/addok.png" alt="Create" title="Create" /> Create</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, add the user, print messages */
@@ -127,7 +127,7 @@ if (empty($_GET['a']) && empty($_GET['user'])) {
 				$out = "\t\t\t\t\t".'<form action="index.php?s=users&amp;a=delete&amp;user='.$_GET['user'].'" method="post">'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete User</h4></td></tr>';
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2">Are you sure you want to delete: <span style="font-weight: bold;">'.$line['userFname'].' '.$line['userLname'].'</span>?</td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="delete"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, delete the user and print messages */

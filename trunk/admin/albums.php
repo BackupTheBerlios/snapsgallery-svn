@@ -57,7 +57,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Edit Album</h4></td></tr>';
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Album Name:</td><td><input type="text" size="30" name="albumName" value="'.$line['albumName'].'" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right; vertical-align: top;">Album Description:</td><td><textarea cols="50" rows="5" name="albumDesc">'.$line['albumDesc'].'</textarea></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="edit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, handle the edit, print messages */
@@ -81,7 +81,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 				$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Create New Album</h4></td></tr>';
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;">Album Name:</td><td><input type="text" size="30" name="albumName" /></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right; vertical-align: top;">Album Description:</td><td><textarea cols="50" rows="5" name="albumDesc"></textarea></td></tr>'."\n";
-				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Create" title="Create" /> Create</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+				$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="create"><img src="icons/addok.png" alt="Create" title="Create" /> Create</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 				$out .= "\t\t\t\t\t".'</form>'."\n";
 			} else {
 				/* Otherwise, handle the add - add album to database, create album folder, print messages */
@@ -133,7 +133,7 @@ if (empty($_GET['a']) && empty($_GET['album'])) {
 						$out = "\t\t\t\t\t".'<form action="index.php?s=albums&amp;a=delete&amp;album='.$_GET['album'].'" method="post">'."\n";
 						$out .= "\t\t\t\t\t".'<tr><td colspan="2"><h4 style="margin-top: 0;">Delete Album</h4></td></tr>';
 						$out .= "\t\t\t\t\t".'<tr><td colspan="2">Are you sure you want to delete: <span style="font-weight: bold;">'.$line['albumName'].'</span>?</td></tr>'."\n";
-						$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
+						$out .= "\t\t\t\t\t".'<tr><td style="text-align: right;"><button type="submit" name="submit" value="delete"><img src="icons/addok.png" alt="Delete" title="Delete" /> Delete</button></td><td><button type="reset" onclick="javascript: cancel();"><img src="icons/cancel.png" alt="Cancel" title="Cancel" /> Cancel</button></td></tr>'."\n";
 						$out .= "\t\t\t\t\t".'</form>'."\n";
 					} else {
 						/* Otherwise, print error message */

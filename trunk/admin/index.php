@@ -58,6 +58,7 @@ if (isset($_SESSION['loggedIn'])) {
 				<li><a <?php if ($section == 'comments') { echo 'class="cur" '; } ?>href="index.php?s=comments"><img src="icons/comments.png" alt="Comments" title="Comments" style="vertical-align: middle;" /> Comments</a></li>
 				<li><a <?php if ($section == 'uploads') { echo 'class="cur" '; } ?>href="index.php?s=uploads"><img src="icons/uploads.png" alt="Uploads" title="Uploads" style="vertical-align: middle;" /> Uploads</a></li>
 				<li><a <?php if ($section == 'config') { echo 'class="cur" '; } ?>href="index.php?s=config"><img src="icons/config.png" alt="Settings" title="Settings" style="vertical-align: middle;" /> Settings</a></li>
+				<li><a href="../index.php"><img src="icons/gallery.png" alt="Gallery" title="Gallery" style="vertical-align: middle;" /> My Gallery</a></li>
 			</ul>
 			</td>
 			<td style="vertical-align: top;" id="content">
