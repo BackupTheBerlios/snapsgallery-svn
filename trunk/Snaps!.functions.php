@@ -93,9 +93,8 @@ function makePagination($albumID) {
 * Function: albumList() - lists albums (index page)
 *
 * @access public
-* @var string $title - the title of the gallery
 */
-function albumList($title = 'Snaps! Gallery') {
+function albumList() {
 	global $db;
 	/* Get the number of albums */
 	$result =& $db->query('SELECT * FROM '.TP.'albums');
@@ -114,167 +113,145 @@ function albumList($title = 'Snaps! Gallery') {
 			$album[$i][4] = $line['albumModified'];
 			$i++;
 		}
-		/* Create the output page */
-		$out = pageHeader($title);
-		$out .= makeTable($album);
 	/* otherwise, we have no albums */
 	} else {
-		$out = pageHeader($title).'<div>There are no albums yet!</div><br /><br />';
+		$album = 'There are no albums yet!';
 	}
-	return $out;
+	//return $out;
+	return $album;
 }
 /**
 * Function: album() - views, creates, and deletes albums
 *
 * @access public
-* @var string $action - view, create, or delete - defaults to view
 * @var integer $albumID - ID of album to display
 */
-function album($action = 'view', $albumID) {
+function album($albumID) {
 	global $db, $title, $config, $start;
-	switch($action) {
-		/* if we are viewing an album */
-		case 'view' :
-			/* Get the album name */
-			$result =& $db->query('SELECT * FROM '.TP.'albums WHERE albumID = '.$albumID);
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
-			$albumTitle = $line['albumName'];
-			$result =& $db->query('SELECT * FROM '.TP.'images');
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			$numImages = $result->numRows();
-			/* Get the images in the album */
-			$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$albumID.' LIMIT '.$start.','.$config['imagesPP']);
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			$albumImages = $result->numRows();
-			/* If we have images, get their information */
-			if ($albumImages > 0) {
-				$i = 1;
-				while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-					$image[$i][0] =  '<a href="'.$_SERVER['PHP_SELF'].'?album='.$albumID.'&amp;image='.$line['imageID'].'">';
-					$image[$i][1] = $line['imageName'];
-					if ($config['enableCache'] == 1) {
-						$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'cache');
-					} else {
-						$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'dynamic');
-					}
-					$image[$i][3] = $line['imageDesc'];
-					$image[$i][4] = $line['imageCreated'];
-					$image[$i][5] = $line['imageModified'];
-					$image[$i][6] = $line['imageViews'];
-					if ($config['allowComment'] == 1) {
-						/* Get number of comments for each image */
-						$rslt =& $db->query('SELECT COUNT(*) FROM '.TP.'comments WHERE imageID = '.$line['imageID']);
-						if (DB::isError($rslt)) {
-							die($rslt->getMessage());
-						}
-						$ln =& $rslt->fetchRow(DB_FETCHMODE_ASSOC);
-						$image[$i][8] = ($ln['COUNT(*)'] > 1) ? $ln['COUNT(*)'].' comments' : (($ln['COUNT(*)'] == 1) ? $ln['COUNT(*)'].' comment' : 'No comments');
-					}
-					$i++;
-				}
-				/* Create the output page */
-				$out = pageHeader($title);
-				$out .= crumb('index', $albumTitle, '');
-				$out .= makeTable($image, 'album');
-				if ($numImages > $config['imagesPP']) {
-					$out .= '<div class="snapsCrumb" style="text-align: right;">'.makePagination($albumID).'</div><br /.>';
-				} else {
-					$out .= '<div class="snapsCrumb" style="text-align: right;">Page 1 of 1</div><br />';
-				}
-			/* otherwise, we have no images */
-			} else {
-				$out = pageHeader($title).crumb('index', $albumTitle, '').'<div style="margin-top: 10px;">There are no images in this album yet!</div><br /><br />';
-			}
-			return $out;
-			break;
-		case 'create' :
-			break;
-		case 'delete' :
-			break;
-		default:
-			break;
+	/* Get the album name */
+	$result =& $db->query('SELECT * FROM '.TP.'albums WHERE albumID = '.$albumID);
+	if (DB::isError($result)) {
+		die($result->getMessage());
 	}
+	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
+	$albumTitle = $line['albumName'];
+	$result =& $db->query('SELECT * FROM '.TP.'images');
+	if (DB::isError($result)) {
+		die($result->getMessage());
+	}
+	$numImages = $result->numRows();
+	/* Get the images in the album */
+	$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$albumID.' LIMIT '.$start.','.$config['imagesPP']);
+	if (DB::isError($result)) {
+		die($result->getMessage());
+	}
+	$albumImages = $result->numRows();
+	/* If we have images, get their information */
+	if ($albumImages > 0) {
+		$i = 1;
+		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+			$image[$i][0] =  '<a href="'.$_SERVER['PHP_SELF'].'?album='.$albumID.'&amp;image='.$line['imageID'].'">';
+			$image[$i][1] = $line['imageName'];
+			if ($config['enableCache'] == 1) {
+				$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'cache');
+			} else {
+				$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'dynamic');
+			}
+			$image[$i][3] = $line['imageDesc'];
+			$image[$i][4] = $line['imageCreated'];
+			$image[$i][5] = $line['imageModified'];
+			$image[$i][6] = $line['imageViews'];
+			if ($config['allowComment'] == 1) {
+				/* Get number of comments for each image */
+				$rslt =& $db->query('SELECT COUNT(*) FROM '.TP.'comments WHERE imageID = '.$line['imageID']);
+				if (DB::isError($rslt)) {
+					die($rslt->getMessage());
+				}
+				$ln =& $rslt->fetchRow(DB_FETCHMODE_ASSOC);
+				$image[$i][8] = ($ln['COUNT(*)'] > 1) ? $ln['COUNT(*)'].' comments' : (($ln['COUNT(*)'] == 1) ? $ln['COUNT(*)'].' comment' : 'No comments');
+			}
+			$i++;
+		}
+		/* Create the output page */
+		$out = pageHeader($title);
+		$out .= crumb('index', $albumTitle, '');
+		$out .= makeTable($image, 'album');
+		if ($numImages > $config['imagesPP']) {
+			$out .= '<div class="snapsCrumb" style="text-align: right;">'.makePagination($albumID).'</div><br /.>';
+		} else {
+			$out .= '<div class="snapsCrumb" style="text-align: right;">Page 1 of 1</div><br />';
+		}
+	/* otherwise, we have no images */
+	} else {
+		$out = pageHeader($title).crumb('index', $albumTitle, '').'<div style="margin-top: 10px;">There are no images in this album yet!</div><br /><br />';
+	}
+	return $out;
 }
 /**
 * Function: image() - views, resizes, and deletes images
 *
 * @access public
-* @var string $action - view or delete - defaults to view
 * @var integer $albumID - ID of album picture belongs to
 * @var integer $imgID - ID of image to work with
 */
 function image($action = 'view', $albumID, $imgID) {
 	global $db, $title, $config;
-	switch($action) {
-		case 'view' :
-			/* Get album name */
-			$result =& $db->query('SELECT * FROM '.TP.'albums WHERE albumID = '.$albumID);
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
-			$albumTitle[0] = $albumID;
-			$albumTitle[1] = $line['albumName'];
-			/* Update number of views for this image */
-			$result =& $db->query('UPDATE '.TP.'images SET imageViews = imageViews+1 WHERE albumID = '.$albumID.' AND imageID = '.$imgID);
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			/* Get the image's information */
-			$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$albumID.' AND imageID = '.$imgID);
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			$i = 1;
-			while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-				$image[$i][0] = $line['imageName'];
-				$image[$i][1] = $line['imageFilename'];
-				$image[$i][2] = $line['imageDesc'];
-				$image[$i][3] = $line['imageCreated'];
-				$image[$i][4] = $line['imageModified'];
-				$image[$i][5] = $line['albumID'];
-				if ($config['enableCache'] == 1) {
-					$image[$i][6] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 600, 'cache');
-				} else {
-					$image[$i][6] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 600, 'dynamic');
-				}
-				$i++;
-			}
-			/* Create the output page */
-			$out = pageHeader($title);
-			$out .= crumb('index', $albumTitle, $image[1][0]);
-			$out .= makeTable($image, 'image', $size = 600);
-			if ($config['allowComment'] == 1) {
-				$out .= '<div class="snapsCrumb"><h3>Comments</h3>';
-				$out .= comment('view', $imgID, $albumID);
-				$out .= '</div><br />';
-			}
-			return $out;
-			break;
-		case 'delete' :
-			break;
-		default :
-			break;
+	/* Get album name */
+	$result =& $db->query('SELECT * FROM '.TP.'albums WHERE albumID = '.$albumID);
+	if (DB::isError($result)) {
+		die($result->getMessage());
 	}
+	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
+	$albumTitle[0] = $albumID;
+	$albumTitle[1] = $line['albumName'];
+	/* Update number of views for this image */
+	$result =& $db->query('UPDATE '.TP.'images SET imageViews = imageViews+1 WHERE albumID = '.$albumID.' AND imageID = '.$imgID);
+	if (DB::isError($result)) {
+		die($result->getMessage());
+	}
+	/* Get the image's information */
+	$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$albumID.' AND imageID = '.$imgID);
+	if (DB::isError($result)) {
+		die($result->getMessage());
+	}
+	$i = 1;
+	while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+		$image[$i][0] = $line['imageName'];
+		$image[$i][1] = $line['imageFilename'];
+		$image[$i][2] = $line['imageDesc'];
+		$image[$i][3] = $line['imageCreated'];
+		$image[$i][4] = $line['imageModified'];
+		$image[$i][5] = $line['albumID'];
+		if ($config['enableCache'] == 1) {
+			$image[$i][6] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 600, 'cache');
+		} else {
+			$image[$i][6] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 600, 'dynamic');
+		}
+		$i++;
+	}
+	/* Create the output page */
+	$out = pageHeader($title);
+	$out .= crumb('index', $albumTitle, $image[1][0]);
+	$out .= makeTable($image, 'image', $size = 600);
+	if ($config['allowComment'] == 1) {
+		$out .= '<div class="snapsCrumb"><h3>Comments</h3>';
+		$out .= comment('view', $imgID, $albumID);
+		$out .= '</div><br />';
+	}
+	return $out;
 }
 /**
 * Function: comment() - view, create, and delete/moderate comments - called from image()
 *
 * @access private
-* @var string $action - view, create, or delete - defaults to view
-* @var integer $imgID - ID of image to view, add, delete/moderate comments for
+* @var string $action - view or create - defaults to view
+* @var integer $imgID - ID of image to view or add comments for
 * @var integer $albID - ID of album image belongs to
 */
 function comment($action = 'view', $imgID, $albID) {
 	global $db, $title;
 	switch($action) {
+		default :
 		case 'view' :
 			/* Get all the comments for this image */
 			$result =& $db->query('SELECT * FROM '.TP.'comments WHERE imageID = '.$imgID);
@@ -316,10 +293,6 @@ function comment($action = 'view', $imgID, $albID) {
 				$out .= '<div class="snapsNotes" style="clear: both;"><span style="color: #900; font-weight: bold;">There was a problem adding your comment.</span><br /><br /><a href="index.php?album='.$albID.'&amp;image='.$imgID.'">Back to the image</a>.</div><br />';
 			}
 			return $out;
-			break;
-		case 'delete' :
-			break;
-		default :
 			break;
 	}
 }

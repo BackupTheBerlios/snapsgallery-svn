@@ -147,7 +147,7 @@ if (!empty($action)) {
 	}
 } else {
 	if (empty($album)) {
-		$out = albumList($title);
+		$out = albumList();
 	} else if (!empty($album) && empty($image)) {
 		$out = album('view', $album);
 	} else {
