@@ -3,6 +3,7 @@
 <head>
 <title>{$title}</title>
 <link rel="stylesheet" type="text/css" href="snaps.css" />
+<script type="text/javascript" src="iepngfix.js"></script>
 {literal}
 <script type="text/javascript">
 function credits() {
