@@ -62,7 +62,7 @@ if (!empty($_POST['submit'])) {
 					<tr><td style="background: #CCC; width: 30%; text-align: right;">Enable Cache:</td><td colspan="2" style="background: #CCC; text-align: left;"><input type="checkbox" name="enableCache" value="1"<?php echo ($config['enableCache'] == 1) ? ' checked="checked"' : ''; ?> /></td></tr>
 					<tr><td style="width: 30%; text-align: right;">Resize Method:</td><td colspan="2" style="text-align: left;"><select name="resizeMethod" size="1"><option value="gd2"<?php echo ($config['resizeMethod'] == 'gd2') ? ' selected="selected"' : ''; ?>>GD2</option><option value="im"<?php echo ($config['resizeMethod'] == 'im') ? ' selected="selected"' : ''; ?>>ImageMagick</option></select></td></tr>
 					<tr><td style="background: #CCC; width: 30%; text-align: right;">ImageMagick Path:</td><td colspan="2" style="background: #CCC; text-align: left;"><input type="text" name="imPath" size="50" value="<?php echo $config['imPath']; ?>" /></td></tr>
-					<tr><td colspan="3" style="padding-left: 120px;"><input onmouseover="this.src='icons/btn_edit_on.png';" onmouseout="this.src='icons/btn_edit.png';" type="image" src="icons/btn_edit.png" name="submit" value="Edit" /></td></tr>
+					<tr><td colspan="3" style="padding-left: 120px;"><button type="submit" name="submit"><img src="icons/addok.png" alt="Edit" title="Edit" /> Edit</button></td></tr>
 					</form>
 				</table>
 			</div>
