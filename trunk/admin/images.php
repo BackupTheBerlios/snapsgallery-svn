@@ -49,6 +49,9 @@ function makePagination($start) {
 					function cancel() {
 						document.location.href = '<?php echo $_SERVER['PHP_SELF']; ?>?s=images';
 					}
+					function picture(pic) {
+						window.open(pic, 'picDetail', 'width=640,height=500,scrollbars=yes,toolbar=no,location=no,directories=no,status=no,menubar=no');
+					}
 				</script>				
 				<table cellpadding="2" cellspacing="0" border="0" style="width: 100%;">
 <?php
@@ -74,7 +77,7 @@ if (empty($_GET['a']) && empty($_GET['image'])) {
 		$bg = ' style="background: #CCC;"';
 		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 			$bg = ($bg == ' style="background: #CCC;"' ? '' : ' style="background: #CCC;"');
-			echo "\t".'<tr><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=edit&amp;image='.$line['imageID'].'"><img src="icons/editimage.png" alt="Edit" title="Edit" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=delete&amp;image='.$line['imageID'].'"><img src="icons/deleteimage.png" alt="Delete" title="Delete" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=move&amp;image='.$line['imageID'].'"><img src="icons/moveimage.png" alt="Move" title="Move" /></a></td><td'.$bg.'>'.$line['imageFilename'].'</td><td'.$bg.'>'.$line['imageName'].'</tr>'."\n\t\t\t\t";
+			echo "\t".'<tr><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=edit&amp;image='.$line['imageID'].'"><img src="icons/editimage.png" alt="Edit" title="Edit" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=delete&amp;image='.$line['imageID'].'"><img src="icons/deleteimage.png" alt="Delete" title="Delete" /></a></td><td class="adminTD"'.$bg.'><a href="index.php?s=images&amp;a=move&amp;image='.$line['imageID'].'"><img src="icons/moveimage.png" alt="Move" title="Move" /></a></td><td'.$bg.'><a href="javascript:picture(\''.$config['snapsURL'].$config['albumsPath'].$line['albumID'].'/'.$line['imageFilename'].'\');">'.$line['imageFilename'].'</a></td><td'.$bg.'>'.$line['imageName'].'</tr>'."\n\t\t\t\t";
 		}
 		echo "\t".'<tr><td class="adminTD" colspan="5" style="text-align: right;">'.makePagination($start).'</td></tr>';
 	} else {
