@@ -1,4 +1,16 @@
 <?php
+/*
+*	File:				Snaps!.image.php
+*	Description:	Creates and returns thumbnails of images
+*	Copyright:	©2004 The Sonic Group, LLC
+*	Website:		http://labs.sonicdesign.us/projects/Snaps!/
+*
+*	This program is free software; you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation; either version 2 of the License, or
+*	(at your option) any later version.
+*/
+
 /* The file */
 if (!empty($_GET['filename'])) {
 	$filename = $_GET['filename'];
@@ -84,4 +96,12 @@ if ($mode == 'cache') {
 	imagejpeg($image_p, null, 100);
 }
 
+/*
+	$filename = escapeshellarg($filename);
+	if ($mode == 'cache') {
+		passthru("{$config['imPath']}convert -quality 100 -antialias -thumbnail {$width}x{$height} {$filename} {$outPath}{$outFilename}");
+	} else {
+		passthru("{$config['imPath']}convert -quality 100 -antialias -thumbnail {$width}x{$height} {$filename}");
+	}
+*/
 ?>

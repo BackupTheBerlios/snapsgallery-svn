@@ -35,7 +35,9 @@ $ConfigVarsSQL = array(	0 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, 
 											7 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('imagesPP', '{$_SESSION['configVars']['imagesPP']}')",
 											8 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('allowComment', '{$_SESSION['configVars']['allowComment']}')",
 											9 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('allowSubmit', '{$_SESSION['configVars']['allowSubmit']}')",
-											10 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('enableCache', '{$_SESSION['configVars']['enableCache']}')");
+											10 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('enableCache', '{$_SESSION['configVars']['enableCache']}')",
+											11 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('resizeMethod', '{$_SESSION['configVars']['resizeMethod']}')",
+											12 => "INSERT INTO `{$_POST['tblPrefix']}config` (`var`, `val`) VALUES ('imPath', '{$_SESSION['configVars']['imPath']}')");
 
 $ImagesSQL = "CREATE TABLE `{$_POST['tblPrefix']}images` (
   `imageID` int(11) NOT NULL auto_increment,

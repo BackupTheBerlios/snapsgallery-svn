@@ -36,7 +36,7 @@ function gd_version() {
 /**
  * Check if a file exists in the include path
  *
- * @version	1.2.0
+ * @version		1.2.0
  * @author		Aidan Lister <aidan@php.net>
  * @param		string	$file	Name of the file to look for
  * @return		bool		TRUE if the file exists, FALSE if it does not
@@ -83,35 +83,14 @@ img {
 	text-decoration: underline;
 }
 
-.btnOK {
-	color: #FFF;
-	background: #090;
-	font-weight: bold;
-	padding: 3px;
-	border: 2px outset #090;
-	cursor: default;
-}
-
-.btnERR {
-	color: #FFF;
-	background: #900;
-	font-weight: bold;
-	padding: 3px;
-	border: 2px outset #900;
-	cursor: default;
-}
-
-.btnWARN {
-	color: #FFF;
-	background: #990;
-	font-weight: bold;
-	padding: 3px;
-	border: 2px outset #990;
-	cursor: default;
-}
-
 td {
 	padding: 6px;
+}
+
+.box {
+	background: #EEE;
+	padding: 4px;
+	border: 1px solid #666;
 }
 </style>
 </head>
@@ -119,23 +98,24 @@ td {
 <div style="width: 700px; margin: 0 auto; text-align: center; background: #FFF; border: 1px solid #666;">
 	<h1 style="float: left;"><img src="../images/snaps_logo.png" alt="Snaps! Gallery" title="Snaps! Gallery" /></h1>
 	<div style="clear: both; text-align: left; padding: 10px;">
-		<h3>Welcome to Snaps!</h3>
 <?php
 	if (empty($step)) {
 ?>
-		<p>The first thing we need to do is check to make sure your server can run Snaps!.</p>
-		<p>Legend:
+		<h3>Snaps! Installation - Step 1 - Server Support</h3>
+		<div class="box">
 			<ul>
 				<li><?php echo STR_OK; ?> - Everything's good to go.</li>
 				<li style="list-style: none;"><br /></li>
-				<li><?php echo STR_WARN; ?> - Snaps! may still run, but the warning should be corrected for the proper running of Snaps!.</li>
+				<li><?php echo STR_WARN; ?> - Snaps! may still run, but the warning should be corrected for proper running of Snaps!.</li>
 				<li style="list-style: none;"><br /></li>
 				<li><?php echo STR_ERR; ?> - Correct the error and re-run this install script. Snaps! will not run if this is not corrected.</li>
 			</ul>
-		</p>
-		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+		</div>
+		<br />
+		<div class="box">
+		<table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">PEAR DB Installed:</td><td style="background: #DDD;">
+				<td style="background: #CCC; text-align: right; width: 30%;">PEAR DB Installed:</td><td style="background: #CCC;">
 				<?php
 				if (!file_exists_incpath('DB.php')) {
 					echo STR_ERR.' Snaps! requires the PEAR DB Library.';
@@ -161,7 +141,7 @@ td {
 				</td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">JPG Support:</td><td style="background: #DDD;">
+				<td style="background: #CCC; text-align: right; width: 30%;">JPG Support:</td><td style="background: #CCC;">
 				<?php
 				if ($gdinfo = gd_info()) {
 					if (!$gdinfo['JPG Support']) {
@@ -191,7 +171,7 @@ td {
 				</td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">GIF Support:</td><td style="background: #DDD;">
+				<td style="background: #CCC; text-align: right; width: 30%;">GIF Support:</td><td style="background: #CCC;">
 				<?php
 				if ($gdinfo = gd_info()) {
 					if (!$gdinfo['GIF Read Support'] || !$gdinfo['GIF Create Support']) {
@@ -223,7 +203,7 @@ td {
 				</td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Uploads Directory is Writable:</td><td style="background: #DDD;">
+				<td style="background: #CCC; text-align: right; width: 30%;">Uploads Directory is Writable:</td><td style="background: #CCC;">
 				<?php
 				if (file_exists('../uploads')) {
 					if (is_writable('../uploads')) {
@@ -253,7 +233,7 @@ td {
 				</td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Config File is Writable:</td><td style="background: #DDD;">
+				<td style="background: #CCC; text-align: right; width: 30%;">Config File is Writable:</td><td style="background: #CCC;">
 				<?php
 				if (is_writable('../Snaps!.config.php')) {
 						echo STR_OK;
@@ -264,61 +244,77 @@ td {
 				</td>
 			</tr>
 		</table>
+		</div>
 		<br />
-		<table cellpadding="3" cellspacing="2" border="0" style="width: 100%; border: 1px solid #999; background: #EEE;">
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; background: #EEE;">
 			<tr>
 				<td style="background: #EEE; text-align: right;">If there are no <?php echo STR_ERR; ?>, click next to go to the next step. <a href="<?php echo $_SERVER['PHP_SELF']; ?>?step=2" class="btn">Next</a></td>
 			</tr>
 		</table>
+		</div>
 <?php
 	} else if ($step == 2) {
 ?>
-		<p>Next we need to get some information about your server. Please make sure the values that the install script detected are correct. In most cases they are, and you can leave them as is.</p>
+		<h3>Snaps! Installation - Step 2 - Snaps! Configuration</h3>
+		<div class="box"><p>Please make sure the values that the install script detected are correct. In most cases they are, and you can leave them as is.</p></div><br />
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>?step=3" method="post">
-		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Absolute Path:</td><td style="background: #EEE;"><input type="text" name="absPath" size="50" value="<?php echo str_replace('install/index.php', '', $_SERVER['SCRIPT_FILENAME']); ?>" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">URL to Snaps!:</td><td style="background: #DDD;"><input type="text" name="snapsURL" size="50" value="<?php echo 'http://'.$_SERVER['SERVER_NAME'].str_replace('install/index.php', '', $_SERVER['SCRIPT_NAME']); ?>" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">URL to Snaps!:</td><td style="background: #CCC;"><input type="text" name="snapsURL" size="50" value="<?php echo 'http://'.$_SERVER['SERVER_NAME'].str_replace('install/index.php', '', $_SERVER['SCRIPT_NAME']); ?>" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Albums Directory:</td><td style="background: #EEE;"><input type="text" name="albumsPath" size="50" value="albums/" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Uploads Directory:</td><td style="background: #DDD;"><input type="text" name="uploadsPath" size="50" value="uploads/" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">Uploads Directory:</td><td style="background: #CCC;"><input type="text" name="uploadsPath" size="50" value="uploads/" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Cache Directory:</td><td style="background: #EEE;"><input type="text" name="cachePath" size="50" value="cache/" /></td>
 			</tr>
 		</table>
-		<p>Now we need to find out how you want your gallery to be displayed.</p>
-		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+		</div><br />
+		<div class="box"><p>Set the options below for how you want your gallery to be displayed and the features you want to use.</p></div><br />
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Gallery Title:</td><td style="background: #EEE;"><input type="text" name="title" size="50" value="Snaps! Gallery" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Albums Per Page:</td><td style="background: #DDD;"><input type="text" name="albumsPP" size="10" value="9" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">Albums Per Page:</td><td style="background: #CCC;"><input type="text" name="albumsPP" size="10" value="9" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Images Per Page:</td><td style="background: #EEE;"><input type="text" name="imagesPP" size="10" value="9" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Enable Comments:</td><td style="background: #DDD;"><input type="checkbox" name="allowComment" value="1" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">Enable Comments:</td><td style="background: #CCC;"><input type="checkbox" name="allowComment" value="1" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Enable Image Submission:</td><td style="background: #EEE;"><input type="checkbox" name="allowSubmit" value="1" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Enable Caching:</td><td style="background: #DDD;"><input type="checkbox" name="enableCache" value="1" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">Enable Caching:</td><td style="background: #CCC;"><input type="checkbox" name="enableCache" value="1" /></td>
+			</tr>
+			<tr>
+				<td style="background: #EEE; text-align: right; width: 30%;">Image Resize Method:</td><td style="background: #EEE;"><select name="resizeMethod" size="1"><option value="gd2">GD2</option><option value="im">ImageMagick</option></select></td>
+			</tr>
+			<tr>
+				<td style="background: #CCC; text-align: right; width: 30%;">ImageMagick Path:</td><td style="background: #CCC;"><input type="text" name="imPath" size="50" value="" /></td>
 			</tr>
 		</table>
+		</div>
 		<br />
-		<table cellpadding="3" cellspacing="2" border="0" style="width: 100%; border: 1px solid #999; background: #EEE;">
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; background: #EEE;">
 			<tr>
 				<td style="background: #EEE; text-align: right;">If everything looks good, click next to go to the next step. <a href="#" onclick="document.forms[0].submit();" class="btn" />Next</a></td>
 			</tr>
 		</table>
+		</div>
 		</form>
 <?php
 } else if ($step == 3) {
@@ -333,31 +329,35 @@ td {
 		$_SESSION['configVars']['enableCache'] = 0;
 	}
 ?>
-		<p>Next we need to set up the Snaps! database.</p>
+		<h3>Snaps! Installation - Step 3 - Database Configuration</h3>
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>?step=4" method="post">
-		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">DB Host:</td><td style="background: #EEE;"><input type="text" name="dbHost" size="50" value="localhost" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">DB User:</td><td style="background: #DDD;"><input type="text" name="dbUser" size="50" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">DB User:</td><td style="background: #CCC;"><input type="text" name="dbUser" size="50" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">DB Pass:</td><td style="background: #EEE;"><input type="text" name="dbPass" size="50" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">DB Name:</td><td style="background: #DDD;"><input type="text" name="dbName" size="50" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">DB Name:</td><td style="background: #CCC;"><input type="text" name="dbName" size="50" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Table Prefix:</td><td style="background: #EEE;"><input type="text" name="tblPrefix" size="50" value="snaps_" /></td>
 			</tr>
 		</table>
+		</div>
 		<br />
-		<table cellpadding="3" cellspacing="2" border="0" style="width: 100%; border: 1px solid #999; background: #EEE;">
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; background: #EEE;">
 			<tr>
 				<td style="background: #EEE; text-align: right;">Double check your information and then click Next to install the database. <a href="#" onclick="document.forms[0].submit();" class="btn" />Next</a></td>
 			</tr>
 		</table>
+		</div>
 		</form>
 <?php
 } else if ($step == 4) {
@@ -366,7 +366,7 @@ td {
 	} else {
 		if (is_writable('../Snaps!.config.php')) {
 			include('snaps_db.php');
-			echo '<p>Attempting connection to the database...</p>';
+			echo '<h3>Snaps! Installation - Step 4 - Perform Setup Operations</h3><div class="box"><p>Attempting connection to the database...</p>';
 			include('DB.php');
 			/* Connect to the database */
 			$dsn = "mysql://{$_POST['dbUser']}:{$_POST['dbPass']}@{$_POST['dbHost']}/{$_POST['dbName']}";
@@ -375,9 +375,9 @@ td {
 				echo ' '.STR_ERR.' '.$db->getMessage().'</p><p>Please correct the error and run this script again.</p>';
 			} else {
 ?>
-				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 					<tr>
-						<td style="background: #EEE; text-align: right; width: 30%;">Connect:</td><td style="background: #EEE;"><?php echo STR_OK; ?></td>
+						<td style="background: #CCC; text-align: right; width: 30%;">Connect:</td><td style="background: #CCC;"><?php echo STR_OK; ?></td>
 					</tr>
 				</table>
 <?php
@@ -401,15 +401,15 @@ td {
 					} else {
 						$err = 0;
 ?>
-				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 					<tr>
-						<td style="background: #EEE; text-align: right; width: 30%;">Configuration Save:</td><td style="background: #EEE;"><?php echo STR_OK; ?></td>
+						<td style="background: #CCC; text-align: right; width: 30%;">Configuration Save:</td><td style="background: #CCC;"><?php echo STR_OK; ?></td>
 					</tr>
 				</table>
 <?php
 						echo '<p>Attempting installation of the database tables...</p>';
 ?>
-				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 <?php
 						echo '<tr><td style="background: #EEE; text-align: right; width: 30%;">Albums Table:</td>';
 						$result =& $db->query($AlbumsSQL);
@@ -419,13 +419,13 @@ td {
 						} else {
 							echo '<td style="background: #EEE;">'.STR_OK.'</td></tr>';
 						}
-						echo '<tr><td style="background: #DDD; text-align: right; width: 30%;">Images Table:</td>';
+						echo '<tr><td style="background: #CCC; text-align: right; width: 30%;">Images Table:</td>';
 						$result =& $db->query($ImagesSQL);
 						if (DB::isError($result)) {
-							echo '<td style="background: #DDD;">'.STR_ERR.' '.$result->getMessage().'<p>Please correct the error and run this script again.</p></td></tr>';
+							echo '<td style="background: #CCC;">'.STR_ERR.' '.$result->getMessage().'<p>Please correct the error and run this script again.</p></td></tr>';
 							$err++;
 						} else {
-							echo '<td style="background: #DDD;">'.STR_OK.'</td></tr>';
+							echo '<td style="background: #CCC;">'.STR_OK.'</td></tr>';
 						}
 						echo '<tr><td style="background: #EEE; text-align: right; width: 30%;">Comments Table:</td>';
 						$result =& $db->query($CommentsSQL);
@@ -435,13 +435,13 @@ td {
 						} else {
 							echo '<td style="background: #EEE;">'.STR_OK.'</td></tr>';
 						}
-						echo '<tr><td style="background: #DDD; text-align: right; width: 30%;">Uploads Table:</td>';
+						echo '<tr><td style="background: #CCC; text-align: right; width: 30%;">Uploads Table:</td>';
 						$result =& $db->query($UploadsSQL);
 						if (DB::isError($result)) {
-							echo '<td style="background: #DDD;">'.STR_ERR.' '.$result->getMessage().'<p>Please correct the error and run this script again.</p></td></tr>';
+							echo '<td style="background: #CCC;">'.STR_ERR.' '.$result->getMessage().'<p>Please correct the error and run this script again.</p></td></tr>';
 							$err++;
 						} else {
-							echo '<td style="background: #DDD;">'.STR_OK.'</td></tr>';
+							echo '<td style="background: #CCC;">'.STR_OK.'</td></tr>';
 						}
 						echo '<tr><td style="background: #EEE; text-align: right; width: 30%;">Users Table:</td>';
 						$result =& $db->query($UsersSQL);
@@ -451,13 +451,13 @@ td {
 						} else {
 							echo '<td style="background: #EEE;">'.STR_OK.'</td></tr>';
 						}
-						echo '<tr><td style="background: #DDD; text-align: right; width: 30%;">Config Table:</td>';
+						echo '<tr><td style="background: #CCC; text-align: right; width: 30%;">Config Table:</td>';
 						$result =& $db->query($ConfigSQL);
 						if (DB::isError($result)) {
-							echo '<td style="background: #DDD;">'.STR_ERR.' '.$result->getMessage().'<p>Please correct the error and run this script again.</p></td></tr>';
+							echo '<td style="background: #CCC;">'.STR_ERR.' '.$result->getMessage().'<p>Please correct the error and run this script again.</p></td></tr>';
 							$err++;
 						} else {
-							echo '<td style="background: #DDD;">'.STR_OK.'</td></table>';
+							echo '<td style="background: #CCC;">'.STR_OK.'</td></table>';
 							echo '<p>Attempting to populate the config table...</p>';
 							$cfgerr = 0;
 							for ($i = 0; $i < count($ConfigVarsSQL); $i++) {
@@ -470,18 +470,21 @@ td {
 								echo ' '.STR_ERR.' '.$result->getMessage().'<p>Please correct the error and run this script again.</p>';
 							} else {
 ?>
-				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+				<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 					<tr>
-						<td style="background: #EEE; text-align: right; width: 30%;">Config Population:</td><td style="background: #EEE;"><?php echo STR_OK; ?></td>
+						<td style="background: #CCC; text-align: right; width: 30%;">Config Population:</td><td style="background: #CCC;"><?php echo STR_OK; ?></td>
 					</tr>
 				</table>
+				</div>
+				<br />
+				<div class="box">
 <?php
 							}
 						}
 						if ($err > 0) {
 							echo ' '.STR_ERR.' <p>Please correct any errors and run this script again.</p>';
 						} else {
-							echo '<p style="text-align: right;">If there are no '.STR_ERR.', click Next to create a user and begin using Snaps!. <a href="'.$_SERVER['PHP_SELF'].'?step=5" class="btn" />Next</a></p>';
+							echo '<p style="text-align: right; margin: 0; padding: 3px;">If there are no '.STR_ERR.', click Next to create a user and begin using Snaps!. <a href="'.$_SERVER['PHP_SELF'].'?step=5" class="btn" />Next</a></p>';
 						}
 					}
 				}
@@ -491,7 +494,7 @@ td {
 		}
 	}
 ?>
-
+			</div>
 <?php
 } else if ($step == 5) {
 
@@ -535,20 +538,21 @@ td {
 			}
 		}
 		</script>
-		<p>The last step is to create an administrative user.</p>
+		<h3>Snaps! Installation - Step 5 - User Creation</h3>
 		<form name="makeUser" action="<?php echo $_SERVER['PHP_SELF']; ?>?step=6" method="post" onsubmit="return validate()">
-		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; border: 1px solid #999;">
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%;">
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">First Name:</td><td style="background: #EEE;"><input type="text" name="userFname" size="50" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Last Name:</td><td style="background: #DDD;"><input type="text" name="userLname" size="50" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">Last Name:</td><td style="background: #CCC;"><input type="text" name="userLname" size="50" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">E-Mail:</td><td style="background: #EEE;"><input type="text" name="userEmail" size="50" /></td>
 			</tr>
 			<tr>
-				<td style="background: #DDD; text-align: right; width: 30%;">Username:</td><td style="background: #DDD;"><input type="text" name="username" size="20" /></td>
+				<td style="background: #CCC; text-align: right; width: 30%;">Username:</td><td style="background: #CCC;"><input type="text" name="username" size="20" /></td>
 			</tr>
 			<tr>
 				<td style="background: #EEE; text-align: right; width: 30%;">Password:</td><td style="background: #EEE;"><input type="password" name="userpass1" id="userpass1" size="10" /></td>
@@ -557,28 +561,32 @@ td {
 				<td style="background: #EEE; text-align: right; width: 30%;">Verify Password:</td><td style="background: #EEE;"><input type="password" name="userpass2" id="userpass2" size="10" /></td>
 			</tr>
 		</table>
+		</div>
 		<br />
-		<table cellpadding="3" cellspacing="2" border="0" style="width: 100%; border: 1px solid #999; background: #EEE;">
+		<div class="box">
+		<table cellpadding="3" cellspacing="0" border="0" style="width: 100%; background: #EEE;">
 			<tr>
 				<td style="background: #EEE; text-align: right;">Click Next to create your user. <input type="submit" name="submit" value="Next" class="btn" /></td>
 			</tr>
 		</table>
+		</div>
 		</form>
 <?php
 } else if ($step == 6) {
+	echo '<h3>Snaps! Installation - Finished!</h3><div class="box">';
 	include('DB.php');
 	include('../Snaps!.config.php');
 	$db =& DB::connect($dsn);
 	if (DB::isError($db)) {
-		echo ' '.STR_ERR.' '.$db->getMessage().'</p><p>Please correct the error and run this script again.</p>';
+		echo '<p>'.STR_ERR.' '.$db->getMessage().'</p><p>Please correct the error and run this script again.</p>';
 	}
 	$subUser = array(	'userID' => '',
-										'userFname' => mysql_real_escape_string($_POST['userFname']),
-										'userLname' => mysql_real_escape_string($_POST['userLname']),
-										'userEmail' => mysql_real_escape_string($_POST['userEmail']),
-										'username' => mysql_real_escape_string($_POST['username']),
-										'userpass' => md5($_POST['userpass1']),
-										'userLastLogin' => time());
+									'userFname' => mysql_real_escape_string($_POST['userFname']),
+									'userLname' => mysql_real_escape_string($_POST['userLname']),
+									'userEmail' => mysql_real_escape_string($_POST['userEmail']),
+									'username' => mysql_real_escape_string($_POST['username']),
+									'userpass' => md5($_POST['userpass1']),
+									'userLastLogin' => time());
 	$result =& $db->query("INSERT INTO ".TP."users (`userID`, `userFname`, `userLname`, `userEmail`, `username`, `userpass`, `userLastLogin`) VALUES ('{$subUser['userID']}', '{$subUser['userFname']}', '{$subUser['userLname']}', '{$subUser['userEmail']}', '{$subUser['username']}', '{$subUser['userpass']}', '{$subUser['userLastLogin']}')");
 	if (DB::isError($result)) {
 		echo '<p>'.STR_ERR.' '.$result->getMessage().' Please correct the error and run this script again.</p>';
@@ -589,12 +597,13 @@ td {
 ?>
 		<p>Congratulations! You have successfully completed the installation of Snaps!. To begin using Snaps!, click the Finish button below.</p>
 		<p style="text-align: right;"><a class="btn" href="../admin/">Finish</a></p>
+		</div>
 <?php
 	}
 }
 ?>
 	</div>
 </div>
-<div class="snapsCopy">Powered by <a href="http://labs.sonicdesign.us/projects/Snaps!/">Snaps!</a> v1.2<p class="snapsNotes">This program uses icons from the <a href="http://www.kde.org">KDE</a> Project by <a href="http://www.everaldo.com">Everaldo Coelho</a> released under the <a href="http://www.gnu.org/licenses/gpl.html">GNU GPL</a>, and the Universal PNG Enabler from <a href="http://dsandler.org/">Dan Sandler</a>, which incorporates code from <a href="http://www.youngpup.net/">Aaron Boodman</a> (inline) and <a href="http://www.allinthehead.com/">Drew McLellan</a> (background).</p></div>
+<div class="snapsCopy">Powered by <a href="http://labs.sonicdesign.us/projects/Snaps!/">Snaps!</a> v1.3.3-beta<p class="snapsNotes">This program uses icons from the <a href="http://www.kde.org">KDE</a> Project by <a href="http://www.everaldo.com">Everaldo Coelho</a> released under the <a href="http://www.gnu.org/licenses/gpl.html">GNU GPL</a>, and the Universal PNG Enabler from <a href="http://dsandler.org/">Dan Sandler</a>, which incorporates code from <a href="http://www.youngpup.net/">Aaron Boodman</a> (inline) and <a href="http://www.allinthehead.com/">Drew McLellan</a> (background).</p></div>
 </body>
 </html>
