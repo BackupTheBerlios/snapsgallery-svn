@@ -132,7 +132,7 @@ function albumList() {
 		$i = 1;
 		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 			$album[$i][0] =  $line['albumID'];
-			$album[$i][1] = $line['albumName'];
+			$album[$i][1] = stripslashes($line['albumName']);
 			$album[$i][2] = $line['albumDesc'];
 			$album[$i][3] = $line['albumCount'];
 			$album[$i][4] = $line['albumModified'];
@@ -159,7 +159,7 @@ function album($albumID) {
 		die($result->getMessage());
 	}
 	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
-	$albumTitle = $line['albumName'];
+	$albumTitle = stripslashes($line['albumName']);
 	$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$albumID);
 	if (DB::isError($result)) {
 		die($result->getMessage());
@@ -176,13 +176,13 @@ function album($albumID) {
 		$i = 1;
 		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 			$image[$i][0] =  '?album='.$albumID.'&amp;image='.$line['imageID'];
-			$image[$i][1] = $line['imageName'];
+			$image[$i][1] = stripslashes($line['imageName']);
 			if ($config['enableCache'] == 1) {
 				$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'cache');
 			} else {
 				$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'dynamic');
 			}
-			$image[$i][3] = $line['imageDesc'];
+			$image[$i][3] = stripslashes($line['imageDesc']);
 			$image[$i][4] = $line['imageCreated'];
 			$image[$i][5] = $line['imageModified'];
 			$image[$i][6] = $line['imageViews'];
@@ -225,7 +225,7 @@ function image($albumID, $imgID) {
 	}
 	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
 	$albumTitle[0] = $albumID;
-	$albumTitle[1] = $line['albumName'];
+	$albumTitle[1] = stripslashes($line['albumName']);
 	/* Update number of views for this image */
 	$result =& $db->query('UPDATE '.TP.'images SET imageViews = imageViews+1 WHERE albumID = '.$albumID.' AND imageID = '.$imgID);
 	if (DB::isError($result)) {
@@ -238,9 +238,9 @@ function image($albumID, $imgID) {
 	}
 	$i = 1;
 	while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-		$image[$i][0] = $line['imageName'];
+		$image[$i][0] = stripslashes($line['imageName']);
 		$image[$i][1] = $line['imageFilename'];
-		$image[$i][2] = $line['imageDesc'];
+		$image[$i][2] = stripslashes($line['imageDesc']);
 		$image[$i][3] = $line['imageCreated'];
 		$image[$i][4] = $line['imageModified'];
 		$image[$i][5] = $line['albumID'];
@@ -282,7 +282,7 @@ function comment($action = 'view', $imgID, $albID) {
 					while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
 						$comment[$i][0] = $line['commentName'];
 						$comment[$i][1] = emailOB($line['commentEmail']);
-						$comment[$i][2] = $line['commentBody'];
+						$comment[$i][2] = stripslashes($line['commentBody']);
 						$comment[$i][3] = $line['commentCreated'];
 						$comment[$i][4] = $imgID;
 						$i++;
