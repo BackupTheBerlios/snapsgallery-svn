@@ -29,8 +29,13 @@ if (!empty($_POST['submit'])) {
 	} else {
 		$eC = $_POST['enableCache'];
 	}
+	if (!empty($_POST['imPath'])) {
+		$imP = str_replace('\\', '/', $_POST['imPath']);
+	} else {
+		$imP = '';
+	}
 	/* Update the database and print messages */
-	$sql = 'REPLACE INTO '.TP.'config (var, val) VALUES ("absPath", "'.$_POST['absPath'].'"), ("albumsPath", "'.$_POST['albumsPath'].'"), ("cachePath", "'.$_POST['cachePath'].'"), ("uploadsPath", "'.$_POST['uploadsPath'].'"), ("snapsURL", "'.$_POST['snapsURL'].'"), ("albumsPP", '.$_POST['albumsPP'].'), ("imagesPP", '.$_POST['imagesPP'].'), ("allowComment", '.$aC.'), ("allowSubmit", '.$aS.'), ("enableCache", '.$eC.')';
+	$sql = 'REPLACE INTO '.TP.'config (var, val) VALUES ("absPath", "'.$_POST['absPath'].'"), ("albumsPath", "'.$_POST['albumsPath'].'"), ("cachePath", "'.$_POST['cachePath'].'"), ("uploadsPath", "'.$_POST['uploadsPath'].'"), ("snapsURL", "'.$_POST['snapsURL'].'"), ("albumsPP", '.$_POST['albumsPP'].'), ("imagesPP", '.$_POST['imagesPP'].'), ("allowComment", '.$aC.'), ("allowSubmit", '.$aS.'), ("enableCache", '.$eC.'), ("resizeMethod", "'.$_POST['resizeMethod'].'"), ("imPath", "'.$imP.'")';
 	$result =& $db->query($sql);
 	if (DB::isError($result)) {
 		die($result->getMessage());
@@ -55,6 +60,8 @@ if (!empty($_POST['submit'])) {
 					<tr><td style="background: #CCC; width: 30%; text-align: right;">Allow Comments:</td><td colspan="2" style="background: #CCC; text-align: left;"><input type="checkbox" name="allowComment" value="1"<?php echo ($config['allowComment'] == 1) ? ' checked="checked"' : ''; ?> /></td></tr>
 					<tr><td style="width: 30%; text-align: right;">Allow Image Submission:</td><td colspan="2" style="text-align: left;"><input type="checkbox" name="allowSubmit" value="1"<?php echo ($config['allowSubmit'] == 1) ? ' checked="checked"' : ''; ?> /></td></tr>
 					<tr><td style="background: #CCC; width: 30%; text-align: right;">Enable Cache:</td><td colspan="2" style="background: #CCC; text-align: left;"><input type="checkbox" name="enableCache" value="1"<?php echo ($config['enableCache'] == 1) ? ' checked="checked"' : ''; ?> /></td></tr>
+					<tr><td style="width: 30%; text-align: right;">Resize Method:</td><td colspan="2" style="text-align: left;"><select name="resizeMethod" size="1"><option value="gd2"<?php echo ($config['resizeMethod'] == 'gd2') ? ' selected="selected"' : ''; ?>>GD2</option><option value="im"<?php echo ($config['resizeMethod'] == 'im') ? ' selected="selected"' : ''; ?>>ImageMagick</option></select></td></tr>
+					<tr><td style="background: #CCC; width: 30%; text-align: right;">ImageMagick Path:</td><td colspan="2" style="background: #CCC; text-align: left;"><input type="text" name="imPath" size="50" value="<?php echo $config['imPath']; ?>" /></td></tr>
 					<tr><td colspan="3" style="padding-left: 120px;"><input onmouseover="this.src='icons/btn_edit_on.png';" onmouseout="this.src='icons/btn_edit.png';" type="image" src="icons/btn_edit.png" name="submit" value="Edit" /></td></tr>
 					</form>
 				</table>

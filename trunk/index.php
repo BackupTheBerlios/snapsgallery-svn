@@ -1,5 +1,4 @@
 <?php
-
 /*
 *	File:				index.php
 *	Description:	Handles display, login, and image submission

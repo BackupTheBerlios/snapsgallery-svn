@@ -1,5 +1,4 @@
 <?php
-
 /*
 *	File:				Snaps!.functions.php
 *	Description:	Main functions file - creates crumb navigation, pagination, album list, album info, image info, and comments
@@ -327,6 +326,7 @@ function getImage($albumID, $imgFilename, $imgName, $size, $mode) {
 	if ($config['resizeMethod'] == 'im') {
 		$outPath = $config['absPath'].$config['cachePath'];
 		$outFilename = md5($imgFilename.'-'.$size).'.jpg';
+		$mode = 'cache';
 		if (file_exists($outPath.$outFilename)) {
 			return '<img src="'.$config['cachePath'].$outFilename.'" alt="'.$imgName.'" title="'.$imgName.'" />';
 		} else {

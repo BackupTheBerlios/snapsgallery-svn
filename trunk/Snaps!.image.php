@@ -96,6 +96,6 @@ if ($config['resizeMethod'] == 'gd2') {
 		imagejpeg($image_p, null, 100);
 	}
 } else {
-	exec("{$config['imPath']}convert -quality 100 -antialias -thumbnail {$width}x{$height} {$filename} {$outPath}{$outFilename}");
+	exec("{$config['imPath']}convert -quality 80 -antialias -geometry {$width}x{$height} {$filename} {$outPath}{$outFilename}");
 }
 ?>

@@ -328,6 +328,9 @@ td {
 	if (empty($_POST['enableCache'])) {
 		$_SESSION['configVars']['enableCache'] = 0;
 	}
+	if (!empty($_POST['imPath'])) {
+		$_SESSION['configVars']['imPath'] = str_replace('\\', '/', $_SESSION['configVars']['imPath']);
+	}
 ?>
 		<h3>Snaps! Installation - Step 3 - Database Configuration</h3>
 		<form action="<?php echo $_SERVER['PHP_SELF']; ?>?step=4" method="post">
