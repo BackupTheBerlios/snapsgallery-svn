@@ -45,11 +45,11 @@ function crumb($index, $album, $imgName) {
 			$bc = 'Album List';
 		/* if we have an album name, we are on the image list page */
 		} else {
-			$bc = '<div class="snapsCrumb"><a href="'.$_SERVER['PHP_SELF'].'">Album List</a> -&gt; '.$album.'</div>';
+			$bc = '<a href="'.$_SERVER['PHP_SELF'].'">Album List</a> -&gt; '.$album;
 		}
 	/* otherwise, we are viewing an image */
 	} else {
-		$bc = '<div class="snapsCrumb"><a href="'.$_SERVER['PHP_SELF'].'">Album List</a> -&gt; <a href="'.$_SERVER['PHP_SELF'].'?album='.$album[0].'">'.$album[1].'</a> - &gt; '.$imgName.'</div>';
+		$bc = '<a href="'.$_SERVER['PHP_SELF'].'">Album List</a> -&gt; <a href="'.$_SERVER['PHP_SELF'].'?album='.$album[0].'">'.$album[1].'</a> - &gt; '.$imgName;
 	}
 	return $bc;
 }
@@ -106,7 +106,7 @@ function albumList() {
 	if ($numAlbums > 0) {
 		$i = 1;
 		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-			$album[$i][0] =  '<a href="'.$_SERVER['PHP_SELF'].'?album='.$line['albumID'].'">';
+			$album[$i][0] =  $line['albumID'];
 			$album[$i][1] = $line['albumName'];
 			$album[$i][2] = $line['albumDesc'];
 			$album[$i][3] = $line['albumCount'];
@@ -117,7 +117,6 @@ function albumList() {
 	} else {
 		$album = 'There are no albums yet!';
 	}
-	//return $out;
 	return $album;
 }
 /**
@@ -135,7 +134,7 @@ function album($albumID) {
 	}
 	$line =& $result->fetchRow(DB_FETCHMODE_ASSOC);
 	$albumTitle = $line['albumName'];
-	$result =& $db->query('SELECT * FROM '.TP.'images');
+	$result =& $db->query('SELECT * FROM '.TP.'images WHERE albumID = '.$albumID);
 	if (DB::isError($result)) {
 		die($result->getMessage());
 	}
@@ -150,7 +149,7 @@ function album($albumID) {
 	if ($albumImages > 0) {
 		$i = 1;
 		while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-			$image[$i][0] =  '<a href="'.$_SERVER['PHP_SELF'].'?album='.$albumID.'&amp;image='.$line['imageID'].'">';
+			$image[$i][0] =  '?album='.$albumID.'&amp;image='.$line['imageID'];
 			$image[$i][1] = $line['imageName'];
 			if ($config['enableCache'] == 1) {
 				$image[$i][2] = getImage($line['albumID'], $line['imageFilename'], $line['imageName'], 100, 'cache');
@@ -168,24 +167,21 @@ function album($albumID) {
 					die($rslt->getMessage());
 				}
 				$ln =& $rslt->fetchRow(DB_FETCHMODE_ASSOC);
-				$image[$i][8] = ($ln['COUNT(*)'] > 1) ? $ln['COUNT(*)'].' comments' : (($ln['COUNT(*)'] == 1) ? $ln['COUNT(*)'].' comment' : 'No comments');
+				$image[$i][7] = ($ln['COUNT(*)'] > 1) ? $ln['COUNT(*)'].' comments' : (($ln['COUNT(*)'] == 1) ? $ln['COUNT(*)'].' comment' : 'No comments');
 			}
 			$i++;
 		}
-		/* Create the output page */
-		$out = pageHeader($title);
-		$out .= crumb('index', $albumTitle, '');
-		$out .= makeTable($image, 'album');
+		$image[1][9] = crumb('index', $albumTitle, '');
 		if ($numImages > $config['imagesPP']) {
-			$out .= '<div class="snapsCrumb" style="text-align: right;">'.makePagination($albumID).'</div><br /.>';
+			$image[1][8] = makePagination($albumID);
 		} else {
-			$out .= '<div class="snapsCrumb" style="text-align: right;">Page 1 of 1</div><br />';
+			$image[1][8] = 'Page 1 of 1';
 		}
 	/* otherwise, we have no images */
 	} else {
-		$out = pageHeader($title).crumb('index', $albumTitle, '').'<div style="margin-top: 10px;">There are no images in this album yet!</div><br /><br />';
+		$image = 'There are no images in this album yet!';
 	}
-	return $out;
+	return $image;
 }
 /**
 * Function: image() - views, resizes, and deletes images
@@ -194,7 +190,7 @@ function album($albumID) {
 * @var integer $albumID - ID of album picture belongs to
 * @var integer $imgID - ID of image to work with
 */
-function image($action = 'view', $albumID, $imgID) {
+function image($albumID, $imgID) {
 	global $db, $title, $config;
 	/* Get album name */
 	$result =& $db->query('SELECT * FROM '.TP.'albums WHERE albumID = '.$albumID);
@@ -229,16 +225,8 @@ function image($action = 'view', $albumID, $imgID) {
 		}
 		$i++;
 	}
-	/* Create the output page */
-	$out = pageHeader($title);
-	$out .= crumb('index', $albumTitle, $image[1][0]);
-	$out .= makeTable($image, 'image', $size = 600);
-	if ($config['allowComment'] == 1) {
-		$out .= '<div class="snapsCrumb"><h3>Comments</h3>';
-		$out .= comment('view', $imgID, $albumID);
-		$out .= '</div><br />';
-	}
-	return $out;
+	$image[1][7] = crumb('index', $albumTitle, $image[1][0]);
+	return $image;
 }
 /**
 * Function: comment() - view, create, and delete/moderate comments - called from image()
@@ -249,52 +237,52 @@ function image($action = 'view', $albumID, $imgID) {
 * @var integer $albID - ID of album image belongs to
 */
 function comment($action = 'view', $imgID, $albID) {
-	global $db, $title;
-	switch($action) {
-		default :
-		case 'view' :
-			/* Get all the comments for this image */
-			$result =& $db->query('SELECT * FROM '.TP.'comments WHERE imageID = '.$imgID);
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			/* Get number of comments */
-			$numComments = $result->numRows();
-			/* If we have comments, get their information */
-			if ($numComments > 0) {
-				$i = 1;
-				while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
-					$comment[$i][0] = $line['commentName'];
-					$comment[$i][1] = $line['commentEmail'];
-					$comment[$i][2] = $line['commentBody'];
-					$comment[$i][3] = $line['commentCreated'];
-					$i++;
+	global $db, $title, $config;
+	if ($config['allowComment'] == 1) {
+		switch($action) {
+			default :
+			case 'view' :
+				/* Get all the comments for this image */
+				$result =& $db->query('SELECT * FROM '.TP.'comments WHERE imageID = '.$imgID);
+				if (DB::isError($result)) {
+					die($result->getMessage());
 				}
-				/* assemble the comments table and submission form */
-				$out = makeTable($comment, 'comment');
-				$out .= makeForm('comment');
-			/* otherwise, there are no comments - assemble the submission form */
-			} else {
-				$out = 'There are no comments for this image.<br />';
-				$out .= makeForm('comment');
-			}
-			return $out;
-			break;
-		case 'create' :
-			$result =& $db->query("INSERT INTO `".TP."comments` ( `commentID` , `imageID` , `commentName` , `commentEmail` , `commentBody` , `commentCreated` ) VALUES ('', '".$imgID."', '".mysql_escape_string($_POST['commentName'])."', '".mysql_escape_string($_POST['commentEmail'])."', '".mysql_escape_string($_POST['commentBody'])."', UNIX_TIMESTAMP())");
-			if (DB::isError($result)) {
-				die($result->getMessage());
-			}
-			if ($db->affectedRows() > 0) {
-				$out = pageHeader($title);
-				$out .= '<div class="snapsNotes" style="clear: both;"><span style="color: #090; font-weight: bold;">Thank you for your comment.</span><br /><br /><a href="index.php?album='.$albID.'&amp;image='.$imgID.'">Back to the image</a>.</div><br />';
-			} else {
-				$out = pageHeader($title);
-				$out .= '<div class="snapsNotes" style="clear: both;"><span style="color: #900; font-weight: bold;">There was a problem adding your comment.</span><br /><br /><a href="index.php?album='.$albID.'&amp;image='.$imgID.'">Back to the image</a>.</div><br />';
-			}
-			return $out;
-			break;
+				/* Get number of comments */
+				$numComments = $result->numRows();
+				/* If we have comments, get their information */
+				if ($numComments > 0) {
+					$i = 1;
+					while ($line =& $result->fetchRow(DB_FETCHMODE_ASSOC)) {
+						$comment[$i][0] = $line['commentName'];
+						$comment[$i][1] = emailOB($line['commentEmail']);
+						$comment[$i][2] = $line['commentBody'];
+						$comment[$i][3] = $line['commentCreated'];
+						$comment[$i][4] = $imgID;
+						$i++;
+					}
+				/* otherwise, there are no comments - assemble the submission form */
+				} else {
+					$comment = 'There are no comments for this image.<br />';
+				}
+				break;
+			case 'create' :
+				$result =& $db->query("INSERT INTO `".TP."comments` ( `commentID` , `imageID` , `commentName` , `commentEmail` , `commentBody` , `commentCreated` ) VALUES ('', '".$imgID."', '".mysql_escape_string($_POST['commentName'])."', '".mysql_escape_string($_POST['commentEmail'])."', '".mysql_escape_string($_POST['commentBody'])."', UNIX_TIMESTAMP())");
+				if (DB::isError($result)) {
+					die($result->getMessage());
+				}
+				if ($db->affectedRows() > 0) {
+					$comment[0] = 'success';
+					$comment[1] = 'Thank you for your comment.<br /><br /><a href="'.$_SERVER['PHP_SELF'].'?album='.$albID.'&amp;image='.$imgID.'">Back</a>';
+				} else {
+					$comment[0] = 'error';
+					$comment[1] = 'There was a problem adding your comment.<br /><br /><a href="'.$_SERVER['PHP_SELF'].'?album='.$albID.'&amp;image='.$imgID.'">Back</a>';
+				}
+				break;
+		}
+	} else {
+		$comment = 'Comments have been disabled.';
 	}
+	return $comment;
 }
 /**
 * Function: getImage() - returns image source if file exists, caches then returns image source if file does not exist
@@ -352,7 +340,7 @@ function makeTable($data, $type = 'index', $size = 100) {
 		case 'album' :
 			$out = "\n".'<table cellpadding="0" cellspacing="10" border="0" style="width: 100%;">'."\n\t".'<tr>'."\n";
 			for ($i = 1; $i < count($data)+1; $i++) {
-				$comment = (!empty($data[$i][8])) ? $data[$i][8].'<br />' : '';
+				$comment = (!empty($data[$i][7])) ? $data[$i][7].'<br />' : '';
 				$out .= "\t\t".'<td class="snapsTable">'.$data[$i][0].$data[$i][2].'</a><br />'.$data[$i][0].$data[$i][1].'</a><br /><br /><div class="snapsNotes"><span style="font-style: oblique;">Viewed '.$data[$i][6].' times<br />'.$comment.'</span>Created: '.date("m-d-Y", $data[$i][4]).'<br />Last modified: '.date("m-d-Y", $data[$i][5]).'</div></td>'."\n";
 				if ($i % 3 == 0) {
 					if (!($i ==  count($data))) {
